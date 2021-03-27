@@ -21,8 +21,8 @@ int main()
 
 	scene->add_camera(new Camera({0, 0, 0}, {w, h}, 60));
 
-	scene->add_object(new Sphere({15, 0, -55}, 10, Color(255, 0, 0)));
 	scene->add_object(new Sphere({-15, 0, -55}, 10, Color(255, 0, 0)));
+	scene->add_object(new Sphere({15, 0, -55}, 10, Color(255, 0, 0)));
 	scene->add_object(new Sphere({0, -2000 - 20, 0}, 2000, Color(255, 255, 255)));
 	scene->add_object(new Sphere({0, 2000 + 100, 0}, 2000, Color(255, 255, 255)));
 	scene->add_object(new Sphere({-2000 - 60, 0, 0}, 2000, Color(0, 255, 0)));
@@ -30,7 +30,8 @@ int main()
 	scene->add_object(new Sphere({0, 0, -2000 - 100}, 2000, Color(0, 255, 255)));
 
 	auto obj = dynamic_cast<SceneObject *>((*scene)[0]);
-	obj->setReflexion(1);
+	obj->setReflexion(0);
+	obj->setTransparency(1, 1.3);
 	obj = dynamic_cast<SceneObject *>((*scene)[1]);
 	obj->setReflexion(1);
 

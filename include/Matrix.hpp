@@ -105,7 +105,8 @@ public:
 	{
 		os << "[";
 
-		for (size_t i = 0; i < m; i++) {
+		for (size_t i = 0; i < m; i++)
+		{
 			if (i == 0)
 				os << "  ";
 			else

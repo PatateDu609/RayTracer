@@ -23,11 +23,9 @@ bool Sphere::intersect(const Ray &ray, Hit &local) const
 	double t2 = (-b + sqrt(delta)) / (2 * a);
 	if (t2 < 0)
 		return false;
-	double t = (t1 > 0) ? t1 : t2;
-
-	local.t = t;
+	local.t = (t1 > 0) ? t1 : t2;
 	local.obj = this;
-	local.pos = ray.origin + ray.dir * t;
-	(local.normal = local.pos - _coord).normalize();
+	local.pos = ray.origin + ray.dir * local.t;
+	local.normal = (local.pos - _coord).normalize();
 	return true;
 }

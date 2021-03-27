@@ -4,13 +4,14 @@
 
 #include "SceneObject.hpp"
 
-SceneObject::SceneObject() : Object(), _color{0, 0, 0}, _reflexion(0.f)
+SceneObject::SceneObject() : Object(), _color(), _reflexion(0.), _transparency(0.), _ior(1.)
 {
 
 }
 
 SceneObject::SceneObject(const Vector3lf &pos, const Color &color, double reflexion) : Object(pos), _color(color),
-                                                                                       _reflexion(0)
+                                                                                       _reflexion(0.), _transparency(0.),
+                                                                                       _ior(1.)
 {
 	setReflexion(reflexion);
 }
@@ -28,6 +29,22 @@ double SceneObject::getReflexion() const
 void SceneObject::setReflexion(double reflexion)
 {
 	_reflexion = std::min(1., std::max(reflexion, .0));
+}
+
+double SceneObject::getTransparency() const
+{
+	return _transparency;
+}
+
+void SceneObject::setTransparency(double transparency, double ior)
+{
+	_transparency = std::min(1., std::max(transparency, .0));
+	_ior = ior;
+}
+
+double SceneObject::getIOR() const
+{
+	return _ior;
 }
 
 SceneObject::~SceneObject() = default;

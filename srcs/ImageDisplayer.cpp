@@ -15,7 +15,8 @@
 
 ImageDisplayer::ImageDisplayer(ImageDisplayer::Mode m, std::string name) : _name(std::move(name)), _mode(m)
 {
-	switch (m) {
+	switch (m)
+	{
 		case PNG:
 			_name += ".png";
 			break;
@@ -44,8 +45,10 @@ ImageDisplayer &ImageDisplayer::operator=(const ImageDisplayer &other)
 
 void ImageDisplayer::display(const std::vector<uint32_t> &data)
 {
-	switch (_mode) {
-		case JPG: {
+	switch (_mode)
+	{
+		case JPG:
+		{
 			std::vector<uint32_t> reversed = data;
 			for (size_t i = 0; i < data.size(); i++)
 				reversed[i] = Color(reversed[i], true);

@@ -30,9 +30,18 @@ public:
 
 	void setReflexion(double reflexion);
 
+	double getTransparency() const;
+
+	double getIOR() const;
+
+	void setTransparency(double transparency, double ior = 1);
+
 private:
 	Color _color;
 	double _reflexion;
+	double _transparency;
+
+	double _ior;
 };
 
 #endif //RAYTRACER_SCENEOBJECT_HPP

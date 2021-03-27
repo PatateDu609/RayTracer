@@ -11,6 +11,16 @@
 Scene *Scene::instance = nullptr;
 
 /**
+ * Returns the square of the number in parameter.
+ * \param n
+ * \return n * n
+ */
+double sqr(double n)
+{
+	return n * n;
+}
+
+/**
  * Constructs a scene.
  * @param target Display target.
  * @param w Image's width.
@@ -57,9 +67,9 @@ void Scene::resetInstance()
  */
 Scene::~Scene()
 {
-	for (Object * cam : _cameras)
+	for (Object *cam : _cameras)
 		delete cam;
-	for (Object * light : _lights)
+	for (Object *light : _lights)
 		delete light;
 	for (Object *obj : _objects)
 		delete obj;
@@ -77,8 +87,10 @@ void Scene::draw() const
 	cam = _cameras[0];
 	light = _lights[0];
 
-	for (int y = 0; y < _height; y++) {
-		for (int x = 0; x < _width; x++) {
+	for (int y = 0; y < _height; y++)
+	{
+		for (int x = 0; x < _width; x++)
+		{
 			Ray ray = cam->castRay({x, y});
 			_frame[y * _width + x] = pixel_color(light, ray, _bounces);
 		}
@@ -197,7 +209,8 @@ Hit Scene::intersect(const Ray &ray) const
 	Hit hit;
 	hit.obj = nullptr;
 
-	for (Object *obj : _objects) {
+	for (Object *obj : _objects)
+	{
 		auto *tobj = dynamic_cast<SceneObject *>(obj);
 
 		if (tobj == nullptr)
@@ -221,13 +234,35 @@ uint32_t Scene::pixel_color(const Light *light, const Ray &ray, uint16_t bounces
 {
 	Hit hit = intersect(ray);
 
-	if (hit.obj && (hit.obj->getReflexion() == 0.0f || !bounces))
-		return light->shade(hit);
-	else if (hit.obj) {
+	if (!hit.obj)
+		return Color();
+	else if (hit.obj->getReflexion() != 0.f && bounces)
+	{
 		Vector3lf dir = (ray.dir - 2 * ray.dir.dot(hit.normal) * hit.normal).normalize();
 		return pixel_color(light, Ray{.origin = hit.pos + 0.001 * hit.normal, .dir = dir}, bounces - 1);
 	}
-	return Color();
+	else if (hit.obj->getTransparency() != 0.f && bounces)
+	{
+		double n1 = 1;
+		double n2 = hit.obj->getIOR();
+		Vector3lf N = hit.normal;
+
+		if (ray.dir.dot(hit.normal) > 0)
+		{
+			std::swap(n1, n2);
+			N = -hit.normal;
+		}
+
+		double radical = 1. - sqr(n1 / n2) * (1. - sqr(N.dot(ray.dir)));
+		if (radical > 0)
+		{
+			Vector3lf dir = (n1 / n2) * (ray.dir - ray.dir.dot(N) * N) - N * sqrt(radical);
+			return pixel_color(light, Ray{.origin = hit.pos - 0.001 * N, .dir = dir.normalize()}, bounces - 1);
+		}
+		return Color();
+	}
+	else
+		return light->shade(hit);
 }
 
 /**

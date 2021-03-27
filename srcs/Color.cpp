@@ -6,12 +6,15 @@
 
 Color::Color(uint32_t color, bool bgr)
 {
-	if (bgr) {
+	if (bgr)
+	{
 		a = (color & 0xff000000) >> 24;
 		b = (color & 0x00ff0000) >> 16;
 		g = (color & 0x0000ff00) >> 8;
 		r = (color & 0x000000ff);
-	} else {
+	}
+	else
+	{
 		r = (color & 0xff000000) >> 24;
 		g = (color & 0x00ff0000) >> 16;
 		b = (color & 0x0000ff00) >> 8;

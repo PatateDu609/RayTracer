@@ -76,7 +76,7 @@ struct Vector
 		return std::sqrt(getNorm2());
 	}
 
-	Vector & normalize()
+	Vector &normalize()
 	{
 		double norm = getNorm();
 		std::for_each(data.begin(), data.end(), [norm](T &x) {
@@ -169,7 +169,7 @@ struct Vector<T, 2>
 		return std::sqrt(getNorm2());
 	}
 
-	Vector<T, 3> & normalize()
+	Vector<T, 3> &normalize()
 	{
 		double norm = getNorm();
 		std::for_each(data.begin(), data.end(), [norm](T &e) {
@@ -266,7 +266,7 @@ struct Vector<T, 3>
 		return std::sqrt(getNorm2());
 	}
 
-	Vector<T, 3> & normalize()
+	Vector<T, 3> &normalize()
 	{
 		double norm = getNorm();
 		std::for_each(data.begin(), data.end(), [norm](T &e) {
@@ -394,6 +394,12 @@ Vector<T, dim> &operator-=(Vector<T, dim> &a, const Vector<T, dim> &b)
 	for (size_t i = 0; i < dim; i++)
 		a[i] -= b[i];
 	return a;
+}
+
+template<typename T, size_t dim>
+Vector<T, dim> operator-(const Vector<T, dim> &v)
+{
+	return -1 * v;
 }
 
 template<typename T, size_t dim>
