@@ -7,7 +7,9 @@
 #include "Scene.hpp"
 #include "Sphere.hpp"
 #include "Camera.hpp"
-#include "Light.hpp"
+#include "SphericalLight.hpp"
+
+long SphericalLight::real_intensity = 700000000;
 
 int main()
 {
@@ -35,7 +37,7 @@ int main()
 	obj = dynamic_cast<SceneObject *>((*scene)[1]);
 	obj->setReflexion(1);
 
-	scene->add_light(new Light({15, 70, -30}, Color(255, 255, 255), 500000000));
+	scene->add_light(new SphericalLight({15, 70, -30}, Color(255, 255, 255), 0.65));
 
 	img.setSize(w, h);
 	img.setComp(4);

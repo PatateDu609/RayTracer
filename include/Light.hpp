@@ -1,9 +1,12 @@
-//
-// Created by bouce on 3/24/2021.
-//
-
 #ifndef RAYTRACER_LIGHT_HPP
 #define RAYTRACER_LIGHT_HPP
+
+/**
+ * 
+ * \author Teyber.
+ * \file Light.hpp.
+ * \date 3/27/2021.
+ */
 
 #include "Object.hpp"
 #include "Color.hpp"
@@ -14,7 +17,7 @@ class Light : public Object
 public:
 	Light() = default;
 
-	Light(const Vector3lf &coord, const Color &diffuse, double intensity);
+	Light(const Color &color, double intensity);
 
 	Light(const Light &other) = default;
 
@@ -22,13 +25,13 @@ public:
 
 	Light &operator=(const Light &other) = default;
 
-	uint32_t shade(const Hit &hit) const;
+	virtual uint32_t shade(const Hit &hit) const = 0;
 
-private:
-	Color _diffuse{0, 0, 0};
+protected:
+	Color _color{0, 0, 0};
 	double _intensity;
-
-	uint32_t diffuse(const Hit &hit) const;
 };
+
+
 
 #endif //RAYTRACER_LIGHT_HPP

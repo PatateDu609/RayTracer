@@ -26,7 +26,7 @@ double sqr(double n)
  * @param w Image's width.
  * @param h Image's height.
  */
-Scene::Scene(Displayer *target, int w, int h) : _target(target), _width(w), _height(h), _bounces(0)
+Scene::Scene(Displayer *target, int w, int h) : _target(target), _width(w), _height(h), _bounces(0), _ambient(nullptr)
 {}
 
 /**
@@ -262,7 +262,7 @@ uint32_t Scene::pixel_color(const Light *light, const Ray &ray, uint16_t bounces
 		return Color();
 	}
 	else
-		return light->shade(hit);
+		return lighting(hit);
 }
 
 /**
@@ -272,4 +272,21 @@ uint32_t Scene::pixel_color(const Light *light, const Ray &ray, uint16_t bounces
 void Scene::setBounces(uint16_t bounces)
 {
 	_bounces = bounces;
+}
+
+void Scene::setAmbient(AmbientLight *ambient)
+{
+	_ambient = ambient;
+}
+
+uint32_t Scene::lighting(Hit &hit) const
+{
+	uint32_t res = _ambient ? _ambient->shade(hit) : Color().abgr();
+
+	for (Light * light : _lights)
+	{
+		Color returned(light->shade(hit), true);
+		res += returned;
+	}
+	return res;
 }
