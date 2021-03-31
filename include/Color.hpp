@@ -6,6 +6,7 @@
 #define RAYTRACER_COLOR_HPP
 
 #include <cstdint>
+#include <iostream>
 
 struct Color
 {
@@ -30,5 +31,6 @@ struct Color
 	uint8_t a{255};
 };
 
+std::ostream& operator<<(std::ostream& os, const Color& c);
 
 #endif //RAYTRACER_COLOR_HPP

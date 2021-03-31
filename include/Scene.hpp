@@ -8,7 +8,6 @@
 #include "Displayer.hpp"
 #include "Camera.hpp"
 #include "SphericalLight.hpp"
-#include "AmbientLight.hpp"
 #include "Object.hpp"
 #include <vector>
 #include <stdexcept>
@@ -67,9 +66,11 @@ public:
 
 	void setBounces(uint16_t bounces);
 
-	Hit intersect(const Ray &ray) const;
+	void setSamples(uint16_t samples);
 
-	void setAmbient(AmbientLight *ambient);
+	void setAmbient(bool ambient);
+
+	Hit intersect(const Ray &ray) const;
 
 private:
 	static Scene *instance;
@@ -83,12 +84,14 @@ private:
 	std::vector<Light *> _lights;
 	std::vector<SceneObject *> _objects;
 	uint16_t _bounces;
-	AmbientLight *_ambient;
+	uint16_t _samples;
+	bool _ambient;
 
+	uint32_t pixel_color(const Ray &ray, uint16_t bounces) const;
+	void trace(const Vector2i &coord, uint32_t &pixel, Camera *cam) const;
 
-	uint32_t pixel_color(const Light *light, const Ray &ray, uint16_t bounces) const;
-
-	uint32_t lighting(Hit &hit) const;
+	uint32_t ambient(const Ray& ray, const Hit& hit, uint16_t bounces) const;
+	uint32_t lighting(const Ray& ray, const Hit &hit, uint16_t bounces) const;
 };
 
 

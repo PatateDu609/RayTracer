@@ -14,6 +14,7 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
+#include <random>
 
 template<class T, size_t m, size_t n>
 class Matrix;
@@ -278,6 +279,15 @@ struct Vector<T, 3>
 	double dot(const Vector &b) const
 	{
 		return x * b.x + y * b.y + z * b.z;
+	}
+
+	Vector cross(const Vector &b) const
+	{
+		return Vector(
+				y * b.z - z * b.y,
+				z * b.x - x * b.z,
+				x * b.y - y * b.x
+		);
 	}
 
 private:

@@ -7573,7 +7573,7 @@ STBIDEF int stbi_is_16_bit_from_callbacks(stbi_io_callbacks const *c, void *user
                          documentation fixes
       2.15  (2017-03-18) fix png-1,2,4 bug; now all Imagenet JPGs decode;
                          warning fixes; disable run-time SSE detection on gcc;
-                         uniform handling of optional "return" values;
+                         g_uniform handling of optional "return" values;
                          thread-safe initialization of zlib tables
       2.14  (2017-03-03) remove deprecated STBI_JPEG_OLD; fixes for Imagenet JPGs
       2.13  (2016-11-29) add 16-bit API, only supported for PNG right now

@@ -57,19 +57,18 @@ void Camera::setFOV(double fov)
  * @param pos Position of the current rendered pixel.
  * @return Returns the casted ray.
  */
-Ray Camera::castRay(const Vector2i &pos)
+Ray Camera::castRay(const Vector2i &pos, const Vector2lf &offset)
 {
 	double ratio = _size.x / (double) _size.y;
 	double angle = tan(_fov / 2.);
 
-	Vector2lf NDC((pos.x + 0.5f) / (double) _size.x, (pos.y + 0.5) / (double) _size.y);
+	Vector2lf NDC((pos.x + 0.5f + offset.x) / (double) _size.x, (pos.y + 0.5 + offset.y) / (double) _size.y);
 
 	Vector2lf camera((2 * NDC.x - 1) * ratio * angle, (1 - 2 * NDC.y) * angle);
 
 	Ray ray;
 	ray.origin = _coord;
-	ray.dir = Vector3lf(camera.x, camera.y, -1);
-	ray.dir.normalize();
+	ray.dir = Vector3lf(camera.x, camera.y, -1).normalize();
 
 	return ray;
 }

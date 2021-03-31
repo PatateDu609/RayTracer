@@ -62,3 +62,9 @@ Color &Color::operator+=(const Color &b)
 	*this = *this + b;
 	return *this;
 }
+
+std::ostream& operator<<(std::ostream& os, const Color& c)
+{
+	os << "r = " << (int)c.r << ", g = " << (int)c.g << ", b = " << (int)c.b << ", a = " << (int)c.a;
+	return os;
+}

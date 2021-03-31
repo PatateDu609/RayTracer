@@ -38,7 +38,7 @@ public:
 
 	void setFOV(double fov);
 
-	Ray castRay(const Vector2i &pos);
+	Ray castRay(const Vector2i &pos, const Vector2lf &offset = Vector2lf());
 
 private:
 	double _fov;

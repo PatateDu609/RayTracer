@@ -5,10 +5,26 @@
  * \date 3/27/2021
  */
 
-#include <Sphere.hpp>
+#define _USE_MATH_DEFINES
+
+#include "Sphere.hpp"
 #include "Scene.hpp"
 
+#include <random>
+#include <cmath>
+#include <future>
+#include <atomic>
+#include <thread>
+
+std::default_random_engine g_engine;
+std::uniform_real_distribution<double> g_uniform(0, 1);
+
 Scene *Scene::instance = nullptr;
+
+double random(double min, double  max)
+{
+	return min + (max - min) * g_uniform(g_engine);
+}
 
 /**
  * Returns the square of the number in parameter.
@@ -26,7 +42,8 @@ double sqr(double n)
  * @param w Image's width.
  * @param h Image's height.
  */
-Scene::Scene(Displayer *target, int w, int h) : _target(target), _width(w), _height(h), _bounces(0), _ambient(nullptr)
+Scene::Scene(Displayer *target, int w, int h) : _target(target), _width(w), _height(h), _bounces(0), _samples(1),
+                                                _ambient(false)
 {}
 
 /**
@@ -76,27 +93,64 @@ Scene::~Scene()
 }
 
 /**
+ * Traces a ray into the scene and saves its color in the frame.
+ * @param coord Current coordinates where we want to draw.
+ * @param pixel The frame array.
+ */
+void Scene::trace(const Vector2i &coord, uint32_t &pixel, Camera *cam) const
+{
+//	Color c;
+	Vector3lf c;
+	for (int k = 0; k < _samples; k++)
+	{
+		double r1 = g_uniform(g_engine);
+		double r2 = g_uniform(g_engine);
+		double R = sqrt(- 2 * log(r1));
+		double dx = R * cos(2 * M_PI * r2);
+		double dy = R * sin(2 * M_PI * r2);
+
+		Ray ray = cam->castRay(coord, {dx, dy});
+
+		Color tmp(pixel_color(ray, _bounces), true);
+		c += Vector3lf(tmp.r, tmp.g, tmp.b);
+	}
+	c *= 1. / _samples;
+	pixel = Color(c.x, c.y, c.z);
+}
+
+/**
  * Draw the current scene targeting the displayer.
  */
 void Scene::draw() const
 {
 	Camera *cam;
-	Light *light;
-	std::vector<uint32_t> _frame(_width * _height, 0);
+	std::vector<uint32_t> frame(_width * _height, 0);
+	std::vector<std::future<void>> futures;
 
 	cam = _cameras[0];
-	light = _lights[0];
 
-	for (int y = 0; y < _height; y++)
+	std::size_t max = _width * _height;
+	std::size_t cores = std::thread::hardware_concurrency();
+
+	for (std::size_t i(0); i < cores; i++)
 	{
-		for (int x = 0; x < _width; x++)
-		{
-			Ray ray = cam->castRay({x, y});
-			_frame[y * _width + x] = pixel_color(light, ray, _bounces);
-		}
+		futures.emplace_back(
+			std::async([&frame, i, max, cores, cam, this]() {
+				for (std::size_t index(i); index < max; index += cores)
+				{
+					std::size_t x = index % _width;
+					std::size_t y = index / _width;
+
+					trace({(int) x, (int) y}, frame[index], cam);
+				}
+			})
+		);
 	}
 
-	_target->display(_frame);
+	for (std::size_t i = 0; i < cores; i++)
+		futures[i].wait();
+
+	_target->display(frame);
 }
 
 /**
@@ -230,7 +284,7 @@ Hit Scene::intersect(const Ray &ray) const
  * @param bounces Remaining bounces.
  * @return Final pixel color.
  */
-uint32_t Scene::pixel_color(const Light *light, const Ray &ray, uint16_t bounces) const
+uint32_t Scene::pixel_color(const Ray &ray, uint16_t bounces) const
 {
 	Hit hit = intersect(ray);
 
@@ -239,7 +293,7 @@ uint32_t Scene::pixel_color(const Light *light, const Ray &ray, uint16_t bounces
 	else if (hit.obj->getReflexion() != 0.f && bounces)
 	{
 		Vector3lf dir = (ray.dir - 2 * ray.dir.dot(hit.normal) * hit.normal).normalize();
-		return pixel_color(light, Ray{.origin = hit.pos + 0.001 * hit.normal, .dir = dir}, bounces - 1);
+		return pixel_color(Ray{.origin = hit.pos + 0.001 * hit.normal, .dir = dir}, bounces - 1);
 	}
 	else if (hit.obj->getTransparency() != 0.f && bounces)
 	{
@@ -257,12 +311,12 @@ uint32_t Scene::pixel_color(const Light *light, const Ray &ray, uint16_t bounces
 		if (radical > 0)
 		{
 			Vector3lf dir = (n1 / n2) * (ray.dir - ray.dir.dot(N) * N) - N * sqrt(radical);
-			return pixel_color(light, Ray{.origin = hit.pos - 0.001 * N, .dir = dir.normalize()}, bounces - 1);
+			return pixel_color(Ray{.origin = hit.pos - 0.001 * N, .dir = dir.normalize()}, bounces - 1);
 		}
 		return Color();
 	}
 	else
-		return lighting(hit);
+		return lighting(ray, hit, bounces - 1);
 }
 
 /**
@@ -274,19 +328,63 @@ void Scene::setBounces(uint16_t bounces)
 	_bounces = bounces;
 }
 
-void Scene::setAmbient(AmbientLight *ambient)
+/**
+ * Computes the Ambient lighting.
+ *
+ * \param hit The target point.
+ */
+uint32_t Scene::ambient(const Ray &ray, const Hit &hit, uint16_t bounces) const
 {
-	_ambient = ambient;
+	double r1 = g_uniform(g_engine);
+	double r2 = g_uniform(g_engine);
+	Vector3lf local(
+		cos(2 * M_PI * r1) * sqrt(1 - r2),
+		sin(2 * M_PI * r1) * sqrt(1 - r2),
+		sqrt(r2)
+	);
+	Vector3lf random(g_uniform(g_engine) - 0.5, g_uniform(g_engine) - 0.5, g_uniform(g_engine) - 0.5);
+	Vector3lf tangent1 = hit.normal.cross(random).normalize();
+	Vector3lf tangent2 = tangent1.cross(hit.normal);
+
+	Vector3lf dir = local[2] * hit.normal + local[0] * tangent1 + local[1] * tangent2;
+	Ray randomRay{.origin = hit.pos + 0.001 * hit.normal, .dir = dir};
+	Color c = Color(pixel_color(randomRay, bounces - 1), true);
+	c.r *= hit.obj->getColor().r / 255.;
+	c.g *= hit.obj->getColor().g / 255.;
+	c.b *= hit.obj->getColor().b / 255.;
+	return c;
 }
 
-uint32_t Scene::lighting(Hit &hit) const
+/**
+ * Computes the lighting of the scene.
+ * @param hit The point where we need to compute the lighting.
+ * @return The final color.
+ */
+uint32_t Scene::lighting(const Ray &ray, const Hit &hit, uint16_t bounces) const
 {
-	uint32_t res = _ambient ? _ambient->shade(hit) : Color().abgr();
+	Color res;
 
-	for (Light * light : _lights)
-	{
-		Color returned(light->shade(hit), true);
-		res += returned;
-	}
+	for (Light *light : _lights)
+		res += Color(light->shade(hit), true);
+	if (_ambient)
+		res += Color(ambient(ray, hit, bounces), true);
 	return res;
+}
+
+/**
+ * Set the number of required samples.
+ * @param samples
+ */
+void Scene::setSamples(uint16_t samples)
+{
+	_samples = std::max(static_cast<uint16_t>(1), samples);
+}
+
+/**
+ * Set if we need to bother rendering ambient lighting or not.
+ * @param ambient
+ */
+void Scene::setAmbient(bool ambient)
+{
+	_ambient = ambient;
 }

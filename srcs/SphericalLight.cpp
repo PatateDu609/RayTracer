@@ -32,7 +32,7 @@ uint32_t SphericalLight::diffuse(const Hit &hit) const
 {
 	Color c;
 	Vector3lf L = _coord - hit.pos;
-	double ratio = L.getNorm2() * M_PI;
+	double ratio = L.getNorm2();
 	L.normalize();
 
 	Vector3lf normalizedColor{
@@ -42,9 +42,9 @@ uint32_t SphericalLight::diffuse(const Hit &hit) const
 	};
 
 	Vector3lf normalizedDiffuse{
-			(double) _color.r / 255.,
-			(double) _color.g / 255.,
-			(double) _color.b / 255.,
+			(double) _color.r / 255. / M_PI,
+			(double) _color.g / 255. / M_PI,
+			(double) _color.b / 255. / M_PI,
 	};
 
 	double dot = std::max(0., L.dot(hit.normal));
