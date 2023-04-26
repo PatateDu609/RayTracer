@@ -1,0 +1,10 @@
+cmake-build-debug
+.idea
+.vscode
+
+generated/lexer.*
+generated/parser.*
+
+*.o
+
+rt

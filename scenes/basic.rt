@@ -1,0 +1,25 @@
+resolution = (1920, 1080)
+
+point_light {
+	position = (123, -1, -3.0562)
+	color = (0, 0, 255)
+	intensity = 0.56
+}
+
+ambient_light ambient_light_id {
+	color = (255, 255, 12)
+	intensity = 0.58
+}
+
+camera cam12 {
+	position = (123, 123, 123)
+	view_direction = (1, 1, 0)
+}
+
+sphere {
+	position = (12, 12, -56)
+	radius = 54
+	material = {
+		diffuse = (123, 56, 52)
+	}
+}
