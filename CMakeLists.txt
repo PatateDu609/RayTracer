@@ -32,7 +32,7 @@ set(SRCS
 		${LEXER_OUT} ${PARSER_OUT}
 		${SRC_PATH}/parser/color.cc
 		${SRC_PATH}/parser/vector.cc
-		${SRC_PATH}/main.cpp
+		${SRC_PATH}/main.cc
 		${SRC_PATH}/parser/point_light.cc
 		${SRC_PATH}/parser/scene.cc
 		${SRC_PATH}/parser/resolution.cc

@@ -2,7 +2,6 @@
 #include <string>
 #include <sstream>
 #include <vector>
-#include <iomanip>
 
 const Material Sphere::default_material(Color(255,255,255));
 
