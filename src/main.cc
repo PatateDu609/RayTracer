@@ -1,6 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include "parser.hpp"
+#include "scene.hpp"
 
 static FILE *open_file(int ac, char **av) {
 	if (ac == 1) {

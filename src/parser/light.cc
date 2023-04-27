@@ -4,9 +4,8 @@ const Color  Light::default_color{255, 255, 255};
 const double Light::default_intensity{1.0};
 
 
-Light::Light(const std::string &identifier, const Color &c, double i) :
-		SceneBlockObject(identifier),
-		color(c), intensity(i) {
+Light::Light(const std::string &identifier) :
+		SceneBlockObject(identifier), color(), intensity() {
 }
 
 
@@ -43,7 +42,8 @@ void Light::resetIntensity() {
 	intensity.reset();
 }
 
-std::ostream &operator<<(std::ostream& os, const Light& l) {
+
+std::ostream &operator<<(std::ostream &os, const Light &l) {
 	os << l.get_type_name();
 	if (l.identifier.has_value()) {
 		os << "(" << *l.identifier << ")";
@@ -57,6 +57,6 @@ std::ostream &operator<<(std::ostream& os, const Light& l) {
 	if (l.intensity.has_value())
 		os << *l.intensity;
 
-	l.print_specific(os, l.intensity.has_value());
+	l.print_specific(os, l.intensity.has_value() || l.color.has_value());
 	return os << "}";
 }

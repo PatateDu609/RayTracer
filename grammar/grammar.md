@@ -85,6 +85,9 @@ And the following block objects.
 
 ### Material Block Object
 
+Material blocks **MUST** be identified using an identifier. The **only** exception to this rule is when materials are
+specified as a property of an other object.
+
 | Property name | Required | Description                                                             | Value type                                | Default Value |
 |---------------|----------|-------------------------------------------------------------------------|-------------------------------------------|---------------|
 | diffuse       | &check;  | Add a diffuse color to the material. The model used is the Phong model. | **Tuple** of 3 integers between 0 and 255 | -             |

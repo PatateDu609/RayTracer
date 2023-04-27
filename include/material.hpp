@@ -1,7 +1,7 @@
 #ifndef RAY_TRACER_INCLUDE_MATERIAL_HPP
 #define RAY_TRACER_INCLUDE_MATERIAL_HPP
 
-#include "scene.hpp"
+#include "scene_block_object.hpp"
 #include "color.hpp"
 
 class Material : public SceneBlockObject {

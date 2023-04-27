@@ -35,6 +35,7 @@ set(SRCS
 		${SRC_PATH}/main.cc
 		${SRC_PATH}/parser/point_light.cc
 		${SRC_PATH}/parser/scene.cc
+		${SRC_PATH}/parser/scene_block_object.cc
 		${SRC_PATH}/parser/resolution.cc
 		${SRC_PATH}/parser/utils.cc
 		${SRC_PATH}/parser/ambient_light.cc
@@ -50,6 +51,7 @@ set(INCLUDE_FILES
 		${INCLUDE_PATH}/vector.hpp
 		${INCLUDE_PATH}/point_light.hpp
 		${INCLUDE_PATH}/scene.hpp
+		${INCLUDE_PATH}/scene_block_object.hpp
 		${INCLUDE_PATH}/resolution.hpp
 		${INCLUDE_PATH}/ambient_light.hpp
 		${INCLUDE_PATH}/light.hpp

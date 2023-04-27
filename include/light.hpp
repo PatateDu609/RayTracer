@@ -1,13 +1,16 @@
 #ifndef RAYTRACER_INCLUDE_LIGHT_HPP
 #define RAYTRACER_INCLUDE_LIGHT_HPP
 
-#include "scene.hpp"
+#include "scene_block_object.hpp"
 #include "color.hpp"
 
 class Light : public SceneBlockObject {
 public:
-	explicit Light(const std::string &identifier = "", const Color &color = default_color,
-	               double intensity = default_intensity);
+	Light() = default;
+	explicit Light(const std::string& identifier);
+
+	Light(const Light& other) = default;
+	Light& operator=(const Light& other) = default;
 
 	[[nodiscard]] const Color &getColor() const;
 	[[nodiscard]] double getIntensity() const;

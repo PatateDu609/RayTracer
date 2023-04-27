@@ -17,6 +17,7 @@
 	#include "camera.hpp"
 	#include "material.hpp"
 	#include "sphere.hpp"
+	#include "scene.hpp"
 }
 
 %code top {
@@ -37,8 +38,9 @@
 }
 
 %define api.value.type variant
-%define parse.error custom
-/* %define parse.trace */
+%define parse.error detailed
+%define parse.lac full
+%define parse.trace
 
 %param {yyscan_t scanner}
 
@@ -87,12 +89,12 @@ epsilon: /* empty rule */
 
 // Creating the actual file description
 file_object_description:
-	resolution_line
-	| point_light_block
-	| ambient_light_block
-	| camera_block
-	| material_block
-	| sphere_block
+	resolution_line { SceneParserProxy::set_resolution($1); }
+	| ambient_light_block { SceneParserProxy::set_ambient_light($1); }
+	| camera_block { SceneParserProxy::set_camera($1); }
+	| point_light_block { SceneParserProxy::append_point_light($1); }
+	| material_block { SceneParserProxy::append_material($1); }
+	| sphere_block { SceneParserProxy::append_sphere($1); }
 
 file_description: epsilon | file_object_description file_description
 
@@ -236,7 +238,7 @@ material_block_content_list:
 	}
 
 material_block_object: OPEN_BLOCK material_block_content_list CLOSE_BLOCK {	$$ = $2; }
-material_block: MATERIAL identifier material_block_object {
+material_block: MATERIAL ID material_block_object {
 	$$ = $3;
 	if (!$2.empty())
 		$$.identifier = $2;
@@ -278,7 +280,7 @@ void yy::parser::error(const std::string& msg) {
 	yyerror(msg.c_str());
 }
 
-void yy::parser::report_syntax_error (const context& ctx) const {
+/* void yy::parser::report_syntax_error (const context& ctx) const {
 	std::ostringstream oss;
 
 	oss << "syntax error: ";
@@ -299,4 +301,4 @@ void yy::parser::report_syntax_error (const context& ctx) const {
 
 	oss << std::endl;
 	std::cerr << oss.str();
-}
+} */

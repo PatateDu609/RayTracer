@@ -17,7 +17,6 @@ public:
 	void r(uint8_t val);
 	void g(uint8_t val);
 	void b(uint8_t val);
-	void rgb(uint8_t r, uint8_t g, uint8_t b);
 
 	[[nodiscard]] double albedo_r() const;
 	[[nodiscard]] double albedo_g() const;

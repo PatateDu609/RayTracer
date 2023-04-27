@@ -1,7 +1,7 @@
 #ifndef RAY_TRACER_INCLUDE_CAMERA_HPP
 #define RAY_TRACER_INCLUDE_CAMERA_HPP
 
-#include "scene.hpp"
+#include "scene_block_object.hpp"
 #include "vector.hpp"
 
 double angle_deg_to_rad(double deg);

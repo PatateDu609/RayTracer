@@ -1,7 +1,7 @@
 #ifndef RAY_TRACER_SPHERE_HPP
 #define RAY_TRACER_SPHERE_HPP
 
-#include "scene.hpp"
+#include "scene_block_object.hpp"
 #include "material.hpp"
 #include "vector.hpp"
 #include <variant>
