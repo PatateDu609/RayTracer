@@ -1,9 +1,9 @@
 resolution = (1920, 1080)
 
 point_light {
-	position = (30, 10, -10)
+	position = (30, -60, -20)
 	color = (204, 126, 25)
-	intensity = 0.2
+	intensity = 0.8
 }
 
 ambient_light ambient_light_id {

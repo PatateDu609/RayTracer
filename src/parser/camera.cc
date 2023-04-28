@@ -114,11 +114,14 @@ SyntaxHighlighter &operator<<(SyntaxHighlighter &sh, const Camera &cam) {
 Ray Camera::cast_ray(const Tuple<double, 2> &pixel_coord) const {
 	uint32_t w           = Scene::resolution().width();
 	uint32_t h           = Scene::resolution().height();
-	double   aspectRatio = Scene::resolution().aspect_ratio();
+//	double   aspectRatio = Scene::resolution().aspect_ratio();
+
+	double x = pixel_coord[0];
+	double y = pixel_coord[1];
 
 	Vector d{
-			pixel_coord[0] - w / 2.,
-			h / 2. - pixel_coord[1],
+			x - w / 2.,
+			h / 2. - y,
 			-(h / 2.) / (tan_fov),
 	};
 	d.normalize();
