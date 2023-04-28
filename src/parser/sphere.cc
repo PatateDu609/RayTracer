@@ -1,5 +1,6 @@
 #include "parser/sphere.hpp"
 #include "parser/scene.hpp"
+#include "syntax_highlighting.hpp"
 #include <string>
 #include <sstream>
 #include <vector>
@@ -60,62 +61,41 @@ void Sphere::setRadius(double r) {
 }
 
 
-std::ostream &operator<<(std::ostream &os, const Sphere &s) {
-	os << "Sphere";
+SyntaxHighlighter &operator<<(SyntaxHighlighter &sh, const Sphere &s) {
+	sh << "Sphere";
 	if (s.identifier)
-		os << "(" << *s.identifier << ")";
-	os << "{";
+		sh << *s.identifier;
+	sh << "{";
 
-	std::vector<std::string> parts;
-	std::ostringstream       oss;
-
-	if (s.position_set) {
-		oss << "position = " << s.position;
-		parts.push_back(oss.str());
-		oss.str("");
-		oss.clear();
-	}
+	if (s.position_set)
+		sh << "position" << "=" << s.position;
 
 	if (s.mat.has_value()) {
-		oss << "material = ";
+		sh << "material" << "=";
 		const auto variant = *s.mat;
 
 		if (std::holds_alternative<std::string>(variant))
-			oss << "Material(" << std::get<std::string>(variant) << ")";
+			sh << std::get<std::string>(variant);
 		else
-			oss << std::get<Material>(variant);
-
-		parts.push_back(oss.str());
-		oss.str("");
-		oss.clear();
+			sh << std::get<Material>(variant);
 	}
 
 	if (s.radius_set) {
-		oss << "radius = " << s.radius;
-		parts.push_back(oss.str());
-		oss.str("");
-		oss.clear();
+		sh << "radius" << "=" << s.radius << SyntaxHighlighter::endl;
 	}
 
-	if (parts.empty())
-		return os << "}";
-
-	os << parts[0];
-	for (size_t i = 1; i < parts.size(); i++)
-		os << ", " << parts[i];
-
-	return os << "}";
+	return sh << "}";
 }
 
 
 std::shared_ptr<IntersectionMetadata> Sphere::intersect(const Ray &r) const {
 	auto ro_center = r.origin - position; // ray origin -> sphere center
 
-	double a = r.direction.dot(r.direction);
+	double a = 1;
 	double b = 2 * r.direction.dot(ro_center);
 	double c = ro_center.dot(ro_center) - radius_2;
 
-	double discriminant = std::pow(b, 2) - 4 * a * c;
+	double discriminant = b * b - 4 * a * c;
 	if (discriminant < 0)
 		return nullptr;
 

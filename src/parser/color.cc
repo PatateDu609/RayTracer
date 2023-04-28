@@ -85,7 +85,30 @@ void Color::compute_albedo_b() {
 }
 
 
+void Color::albedo_r(double val) {
+	_albedo[0]   = std::max(std::min(val, 1.), 0.);
+	_internal[0] = _albedo[0] * 255.;
+}
+
+
+void Color::albedo_g(double val) {
+	_albedo[1]   = std::max(std::min(val, 1.), 0.);
+	_internal[1] = _albedo[1] * 255.;
+}
+
+
+void Color::albedo_b(double val) {
+	_albedo[2]   = std::max(std::min(val, 1.), 0.);
+	_internal[2] = _albedo[2] * 255.;
+}
+
+#include "syntax_highlighting.hpp"
+
 std::ostream &operator<<(std::ostream &os, const Color &c) {
 	return os << "Color(" << +c.r() << ", " << +c.g() << ", " << +c.b() << ")";
+}
+
+SyntaxHighlighter &operator<<(SyntaxHighlighter &sh, const Color &c) {
+	return sh << "(" << c.r() << "," << c.g() << "," << c.b() << ")";
 }
 

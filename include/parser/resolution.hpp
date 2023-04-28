@@ -3,6 +3,9 @@
 
 #include "utils.hpp"
 #include <iostream>
+#include "tuple.hpp"
+
+class SyntaxHighlighter;
 
 class Resolution {
 public:
@@ -27,7 +30,7 @@ private:
 
 	void update_ratio();
 
-	friend std::ostream &operator<<(std::ostream &os, const Resolution &r);
+	friend SyntaxHighlighter &operator<<(SyntaxHighlighter &os, const Resolution &r);
 };
 
 

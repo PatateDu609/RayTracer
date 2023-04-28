@@ -3,14 +3,17 @@
 
 #include "scene_block_object.hpp"
 #include "color.hpp"
+#include "sphere.hpp"
+
+#define DEFAULT_LIGHT_INTENSITY 250
 
 class Light : public SceneBlockObject {
 public:
 	Light() = default;
-	explicit Light(const std::string& identifier);
+	explicit Light(const std::string &identifier);
 
-	Light(const Light& other) = default;
-	Light& operator=(const Light& other) = default;
+	Light(const Light &other) = default;
+	Light &operator=(const Light &other) = default;
 
 	[[nodiscard]] const Color &getColor() const;
 	[[nodiscard]] double getIntensity() const;
@@ -21,18 +24,16 @@ public:
 	void setIntensity(double i);
 	void resetIntensity();
 
-protected:
-	[[nodiscard]] virtual std::string get_type_name() const = 0;
-	virtual void print_specific(std::ostream &os, bool need_comma) const = 0;
+	[[nodiscard]]
+	virtual Color compute_lighting(const std::shared_ptr<IntersectionMetadata> &metadata) const = 0;
 
 private:
 	static const Color  default_color;
 	static const double default_intensity;
 
+protected:
 	std::optional<Color>  color;
 	std::optional<double> intensity;
-
-	friend std::ostream &operator<<(std::ostream &os, const Light &l);
 
 	friend class yy::parser;
 };

@@ -34,29 +34,10 @@ void Light::resetColor() {
 
 
 void Light::setIntensity(double i) {
-	*intensity = i;
+	intensity = i;
 }
 
 
 void Light::resetIntensity() {
 	intensity.reset();
-}
-
-
-std::ostream &operator<<(std::ostream &os, const Light &l) {
-	os << l.get_type_name();
-	if (l.identifier.has_value()) {
-		os << "(" << *l.identifier << ")";
-	}
-	os << "{";
-
-	if (l.color.has_value())
-		os << "color = " << *l.color;
-	if (l.color.has_value() && l.intensity.has_value())
-		os << ", ";
-	if (l.intensity.has_value())
-		os << *l.intensity;
-
-	l.print_specific(os, l.intensity.has_value() || l.color.has_value());
-	return os << "}";
 }

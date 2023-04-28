@@ -11,6 +11,10 @@
 #include "ambient_light.hpp"
 #include "point_light.hpp"
 
+
+void dump_scene();
+
+
 class NoSceneLoadedException : public std::exception {
 public:
 	const char *what() const noexcept override;
@@ -19,8 +23,8 @@ public:
 class SceneParserProxy {
 public:
 	SceneParserProxy() = delete;
-	SceneParserProxy(const SceneParserProxy& other) = delete;
-	SceneParserProxy& operator=(const SceneParserProxy& other) = delete;
+	SceneParserProxy(const SceneParserProxy &other) = delete;
+	SceneParserProxy &operator=(const SceneParserProxy &other) = delete;
 
 private:
 	static void set_resolution(const Resolution &resolution);
@@ -67,6 +71,8 @@ private:
 	std::map<std::string, std::shared_ptr<Material>> mats;
 
 	friend SceneParserProxy;
+
+	friend void dump_scene();
 };
 
 #endif //RAYTRACER_INCLUDE_SCENE_HPP

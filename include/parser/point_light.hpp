@@ -1,10 +1,10 @@
 #ifndef RAYTRACER_INCLUDE_POINT_LIGHT_HPP
 #define RAYTRACER_INCLUDE_POINT_LIGHT_HPP
 
+#include "light.hpp"
 #include <optional>
 #include "color.hpp"
 #include "vector.hpp"
-#include "light.hpp"
 
 class PointLight final : public Light {
 public:
@@ -13,9 +13,7 @@ public:
 	void setPosition(const Vector &pos);
 	[[nodiscard]] const Vector &getPosition() const;
 
-protected:
-	[[nodiscard]] std::string get_type_name() const override;
-	void print_specific(std::ostream &os, bool need_comma) const override;
+	[[nodiscard]] Color compute_lighting(const std::shared_ptr<IntersectionMetadata> &metadata) const final;
 
 private:
 	bool position_set{};
@@ -23,6 +21,8 @@ private:
 	Vector position;
 
 	friend class yy::parser;
+
+	friend SyntaxHighlighter &operator<<(SyntaxHighlighter& sh, const PointLight& pt);
 };
 
 #endif //RAYTRACER_INCLUDE_POINT_LIGHT_HPP

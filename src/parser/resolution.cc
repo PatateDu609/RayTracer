@@ -1,5 +1,6 @@
 #include "parser/resolution.hpp"
 
+
 Resolution::Resolution(uint32_t w, uint32_t h) : tuple{w, h} {
 	update_ratio();
 }
@@ -36,6 +37,7 @@ void Resolution::height(uint32_t val) {
 	update_ratio();
 }
 
+
 void Resolution::update_ratio() {
 	if (tuple[0] && tuple[1])
 		ratio = static_cast<double>(tuple[0]) / static_cast<double>(tuple[1]);
@@ -43,7 +45,11 @@ void Resolution::update_ratio() {
 		ratio = 0;
 }
 
-std::ostream& operator<<(std::ostream& os, const Resolution& r) {
-	os << "Resolution" << r.tuple;
+
+#include "syntax_highlighting.hpp"
+
+
+SyntaxHighlighter &operator<<(SyntaxHighlighter &os, const Resolution &r) {
+	os << "Resolution" << "=" << "(" << static_cast<long>(r.tuple[0]) << "," << static_cast<long>(r.tuple[1]) << ")";
 	return os;
 }

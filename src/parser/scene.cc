@@ -1,4 +1,5 @@
 #include "parser/scene.hpp"
+#include "syntax_highlighting.hpp"
 #include <sstream>
 
 std::unique_ptr<Scene> Scene::scene_instance{};
@@ -106,5 +107,31 @@ std::shared_ptr<Material> Scene::material(const std::string &id) {
 		return Scene::scene_instance->mats.at(id);
 	} catch (const std::out_of_range &e) {
 		return std::shared_ptr<Material>(nullptr);
+	}
+}
+
+
+void dump_scene() {
+	SyntaxHighlighter sh(std::cout);
+
+	const std::unique_ptr<Scene> &s = Scene::scene_instance;
+
+	sh << *s->res << SyntaxHighlighter::endl;
+
+	if (s->ambient_lighting)
+		sh << *s->ambient_lighting << SyntaxHighlighter::endl;
+	if (s->cam)
+		sh << *s->cam << SyntaxHighlighter::endl;
+
+	for (const auto &l: s->pt_lights) {
+		sh << *l << SyntaxHighlighter::endl;
+	}
+	std::cout << std::endl;
+	for (const auto &sp: s->sps) {
+		sh << *sp << SyntaxHighlighter::endl;
+	}
+	std::cout << std::endl;
+	for (const auto &mat: s->mats) {
+		std::cout << *mat.second << std::endl;
 	}
 }

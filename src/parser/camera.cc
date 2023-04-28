@@ -54,8 +54,7 @@ double Camera::fov() const {
 
 
 void Camera::position(const Vector &p) {
-	pos = p;
-	pos.normalize();
+	pos     = p;
 	pos_set = true;
 }
 
@@ -90,52 +89,25 @@ void Camera::reset_fov() {
 }
 
 
-std::ostream &operator<<(std::ostream &os, const Camera &cam) {
-	os << "Camera";
+#include "syntax_highlighting.hpp"
+
+
+SyntaxHighlighter &operator<<(SyntaxHighlighter &sh, const Camera &cam) {
+	sh << "Camera";
 	if (cam.identifier)
-		os << "(" << *cam.identifier << ")";
-	os << "{";
+		sh << *cam.identifier;
+	sh << "{";
 
-	std::vector<std::string> parts;
-	std::ostringstream       oss;
+	if (cam.pos_set)
+		sh << "position" << "=" << cam.pos;
 
-	if (cam.pos_set) {
-		oss << "position = " << cam.pos;
-		parts.push_back(oss.str());
-		oss.str("");
-		oss.clear();
-	}
+	if (cam.view_dir_set)
+		sh << "view_dir" << "=" << cam.view_dir;
 
-	if (cam.view_dir_set) {
-		oss << "view_dir = " << cam.view_dir;
-		parts.push_back(oss.str());
-		oss.str("");
-		oss.clear();
-	}
+	sh << "up_dir" << "=" << cam.up();
+	sh << "fov" << "=" << angle_rad_to_deg(cam.fov()) << SyntaxHighlighter::endl;
 
-	if (cam.up_dir.has_value()) {
-		oss << "up_dir = " << *cam.up_dir;
-		parts.push_back(oss.str());
-		oss.str("");
-		oss.clear();
-	}
-
-	if (cam.fov_rad.has_value()) {
-		auto default_precision = oss.precision();
-		oss << "fov = " << std::setprecision(1) << *cam.fov_rad
-		    << std::setprecision(static_cast<int>(default_precision));
-		oss.str("");
-		oss.clear();
-	}
-
-	if (parts.empty())
-		return os << "}";
-
-	os << parts[0];
-	for (size_t i = 1; i < parts.size(); i++)
-		os << ", " << parts[i];
-
-	return os << "}";
+	return sh << "}";
 }
 
 
@@ -144,9 +116,12 @@ Ray Camera::cast_ray(const Tuple<double, 2> &pixel_coord) const {
 	uint32_t h           = Scene::resolution().height();
 	double   aspectRatio = Scene::resolution().aspect_ratio();
 
-	double x = pixel_coord[0] - w  / 2;
-	double y = pixel_coord[1] - h / 2;
-	double z = - w / 2 * tan_fov * aspectRatio;
+	Vector d{
+			pixel_coord[0] - w / 2.,
+			h / 2. - pixel_coord[1],
+			-(h / 2.) / (tan_fov),
+	};
+	d.normalize();
 
-	return Ray(Vector(0, 0, 0), Vector(x, y, z));
+	return Ray(Vector(0, 0, 0), d);
 }

@@ -44,7 +44,7 @@ private:
 	std::optional<double> fov_rad;
 	double tan_fov;
 
-	friend std::ostream &operator<<(std::ostream& os, const Camera& cam);
+	friend SyntaxHighlighter &operator<<(SyntaxHighlighter& os, const Camera& cam);
 	friend class yy::parser;
 };
 

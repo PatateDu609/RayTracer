@@ -76,6 +76,13 @@ Vector &Vector::operator+=(const Vector &other) {
 	return *this;
 }
 
+Vector& Vector::operator-() {
+	x(-x());
+	y(-y());
+	z(-z());
+	return *this;
+}
+
 
 Vector Vector::operator-(const Vector &other) const {
 	Vector res(x() - other.x(), y() - other.y(), z() - other.z());
@@ -135,7 +142,13 @@ void Vector::compute_norm() {
 	_norm = sqrt(sum);
 }
 
+#include "syntax_highlighting.hpp"
 
 std::ostream &operator<<(std::ostream &os, const Vector &v) {
 	return os << "Vector" << v._internal;
+}
+
+SyntaxHighlighter& operator<<(SyntaxHighlighter& sh, const Vector& v) {
+	sh << v._internal;
+	return sh;
 }

@@ -38,7 +38,7 @@ set(SRCS
 		${SRC_PATH}/parser/scene.cc
 		${SRC_PATH}/parser/scene_block_object.cc
 		${SRC_PATH}/parser/resolution.cc
-		${SRC_PATH}/parser/utils.cc
+		${SRC_PATH}/syntax_highlighting.cc
 		${SRC_PATH}/parser/ambient_light.cc
 		${SRC_PATH}/parser/light.cc
 		${SRC_PATH}/parser/material.cc
@@ -51,7 +51,7 @@ set(SRCS
 set(INCLUDE_FILES
 		${LEXER_HEADER_OUT} ${PARSER_HEADER_OUT}
 		${INCLUDE_PATH}/parser/color.hpp
-		${INCLUDE_PATH}/parser/utils.hpp
+		${INCLUDE_PATH}/syntax_highlighting.hpp
 		${INCLUDE_PATH}/parser/vector.hpp
 		${INCLUDE_PATH}/parser/point_light.hpp
 		${INCLUDE_PATH}/parser/scene.hpp

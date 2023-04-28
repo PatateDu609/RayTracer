@@ -5,10 +5,7 @@
 #include <cinttypes>
 #include <array>
 #include <iostream>
-
-template<typename T, size_t size>
-struct Tuple : public std::array<T, size> {
-};
+#include "tuple.hpp"
 
 
 template<typename T, size_t size>

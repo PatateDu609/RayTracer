@@ -1,7 +1,7 @@
 #include <iostream>
 #include <sstream>
-#include "parser.hpp"
 #include "parser/scene.hpp"
+#include "parser.hpp"
 #include "engine/renderer.hpp"
 
 #include <stb_image_write.h>
@@ -49,6 +49,8 @@ static void output_png(const std::string &path, const std::vector<uint8_t> &imag
 
 int main(int ac, char **av) {
 	parse_scene(ac, av);
+
+	dump_scene();
 
 	const std::vector<Color> &colors = render();
 

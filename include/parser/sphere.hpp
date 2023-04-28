@@ -49,7 +49,7 @@ private:
 	std::shared_ptr<IntersectionMetadata> make_metadata(const Ray& r, double t) const;
 
 	friend class yy::parser;
-	friend std::ostream &operator<<(std::ostream& os, const Sphere& s);
+	friend SyntaxHighlighter& operator<<(SyntaxHighlighter& sh, const Sphere& s);
 };
 
 #endif //RAY_TRACER_SPHERE_HPP

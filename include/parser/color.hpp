@@ -1,7 +1,10 @@
 #ifndef RAY_TRACER_INCLUDE_COLOR_H
 #define RAY_TRACER_INCLUDE_COLOR_H
 
-#include "utils.hpp"
+#include "tuple.hpp"
+#include <iostream>
+
+class SyntaxHighlighter;
 
 class Color {
 public:
@@ -22,6 +25,10 @@ public:
 	[[nodiscard]] double albedo_g() const;
 	[[nodiscard]] double albedo_b() const;
 
+	void albedo_r(double val);
+	void albedo_g(double val);
+	void albedo_b(double val);
+
 private:
 	Tuple<uint8_t, 3> _internal;
 	Tuple<double, 3> _albedo;
@@ -32,6 +39,7 @@ private:
 	void compute_albedo_b();
 
 	friend std::ostream &operator<<(std::ostream& os, const Color& c);
+	friend SyntaxHighlighter &operator<<(SyntaxHighlighter& os, const Color& c);
 };
 
 #endif

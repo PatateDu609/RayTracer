@@ -18,6 +18,7 @@ private:
 
 	friend yy::parser;
 	friend std::ostream &operator<<(std::ostream& os, const Material &mat);
+	friend SyntaxHighlighter& operator<<(SyntaxHighlighter& sh, const Material& mat);
 };
 
 #endif //RAY_TRACER_INCLUDE_MATERIAL_HPP

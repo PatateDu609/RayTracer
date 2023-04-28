@@ -7,11 +7,10 @@ class AmbientLight final : public Light {
 public:
 	explicit AmbientLight(const std::string& identifier = "");
 
-protected:
-	[[nodiscard]] std::string get_type_name() const override;
-	void print_specific(std::ostream &os, bool need_comma) const override;
+	[[nodiscard]] Color compute_lighting(const std::shared_ptr<IntersectionMetadata> &metadata) const final;
 
 	friend class yy::parser;
+	friend SyntaxHighlighter& operator<<(SyntaxHighlighter& sh, const AmbientLight &lt);
 };
 
 #endif //RAYTRACER_INCLUDE_AMBIENT_LIGHT_HPP

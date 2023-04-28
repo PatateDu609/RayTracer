@@ -21,6 +21,7 @@ void Material::setDiffuse(const Color &d) {
 	diffuse_set = true;
 }
 
+#include "syntax_highlighting.hpp"
 
 std::ostream &operator<<(std::ostream &os, const Material &mat) {
 	os << "Material";
@@ -32,4 +33,16 @@ std::ostream &operator<<(std::ostream &os, const Material &mat) {
 		os << "diffuse = " << mat.diffuse;
 
 	return os << "}";
+}
+
+SyntaxHighlighter& operator<<(SyntaxHighlighter& sh, const Material& mat) {
+	sh << "Material";
+	if (mat.identifier)
+		sh << *mat.identifier;
+	sh << "{";
+
+	if (mat.diffuse_set)
+		sh << "diffuse" << "=" << mat.diffuse;
+
+	return sh << "}";
 }

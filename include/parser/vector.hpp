@@ -1,7 +1,10 @@
 #ifndef RAY_TRACER_INCLUDE_VECTOR_H
 #define RAY_TRACER_INCLUDE_VECTOR_H
 
-#include "utils.hpp"
+#include "tuple.hpp"
+#include <iostream>
+
+class SyntaxHighlighter;
 
 class Vector {
 public:
@@ -23,6 +26,7 @@ public:
 
 	Vector operator+(const Vector& other) const;
 	Vector& operator+=(const Vector& other);
+	Vector& operator-();
 	Vector operator-(const Vector& other) const;
 	Vector& operator-=(const Vector& other);
 	Vector operator*(double lambda) const;
@@ -38,6 +42,7 @@ private:
 	void compute_norm();
 
 	friend std::ostream &operator<<(std::ostream& os, const Vector& v);
+	friend SyntaxHighlighter &operator<<(SyntaxHighlighter& sh, const Vector& v);
 };
 Vector operator*(double lambda, const Vector& a);
 
