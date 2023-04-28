@@ -1,4 +1,4 @@
-#include "light.hpp"
+#include "parser/light.hpp"
 
 const Color  Light::default_color{255, 255, 255};
 const double Light::default_intensity{1.0};

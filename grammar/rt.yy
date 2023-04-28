@@ -9,15 +9,15 @@
 	#include "lexer.hpp"
 	#endif
 
-	#include "color.hpp"
-	#include "resolution.hpp"
-	#include "vector.hpp"
-	#include "point_light.hpp"
-	#include "ambient_light.hpp"
-	#include "camera.hpp"
-	#include "material.hpp"
-	#include "sphere.hpp"
-	#include "scene.hpp"
+	#include "parser/color.hpp"
+	#include "parser/resolution.hpp"
+	#include "parser/vector.hpp"
+	#include "parser/point_light.hpp"
+	#include "parser/ambient_light.hpp"
+	#include "parser/camera.hpp"
+	#include "parser/material.hpp"
+	#include "parser/sphere.hpp"
+	#include "parser/scene.hpp"
 }
 
 %code top {
@@ -108,42 +108,15 @@ number:
 	| FLOAT { $$ = $1; }
 
  // Defining resolution line
-resolution_tuple: OPEN_TUPLE INT COMMA INT CLOSE_TUPLE {
-	$$ = Resolution($2, $4);
-	std::cout << "got tuple " << $$ << std::endl;
-}
-
-resolution_line: RESOLUTION EQUAL resolution_tuple {
-	$$ = $3;
-	std::cout << "got resolution: " << $$ << std::endl;
-}
+resolution_tuple: OPEN_TUPLE INT COMMA INT CLOSE_TUPLE { $$ = Resolution($2, $4); }
+resolution_line: RESOLUTION EQUAL resolution_tuple { $$ = $3; }
 
  // Defining utils lines
-color_tuple: OPEN_TUPLE INT COMMA INT COMMA INT CLOSE_TUPLE {
-	$$ = Color($2, $4, $6);
-	std::cout << "got tuple " << $$ << std::endl;
-}
-
-color_line: COLOR EQUAL color_tuple {
-	$$ = $3;
-	std::cout << "got color: " << $$ << std::endl;
-}
-
-vector: OPEN_TUPLE number COMMA number COMMA number CLOSE_TUPLE {
-	$$ = Vector($2, $4, $6);
-	std::cout << "got tuple " << $$ << std::endl;
-}
-
-position_line: POSITION EQUAL vector {
-	$$ = $3;
-	std::cout << "got position: " << $$ << std::endl;
-}
-
-intensity_line: INTENSITY EQUAL number {
-	$$ = $3;
-	std::cout << "got intensity: " << $$ << std::endl;
-}
-
+color_tuple: OPEN_TUPLE INT COMMA INT COMMA INT CLOSE_TUPLE { $$ = Color($2, $4, $6); }
+color_line: COLOR EQUAL color_tuple { $$ = $3; }
+vector: OPEN_TUPLE number COMMA number COMMA number CLOSE_TUPLE { $$ = Vector($2, $4, $6); }
+position_line: POSITION EQUAL vector { $$ = $3; }
+intensity_line: INTENSITY EQUAL number { $$ = $3; }
 
  // Adding the point_light block definition
 point_light_block_content:
@@ -167,7 +140,6 @@ point_light_block: POINT_LIGHT identifier OPEN_BLOCK point_light_block_content_l
 	$$ = $4;
 	if (!$2.empty())
 		$$.identifier = $2;
-	std::cout << "got point light block: " << $$ << std::endl;
 }
 
  // Adding the ambient_light block definition
@@ -189,7 +161,6 @@ ambient_light_block: AMBIENT_LIGHT identifier OPEN_BLOCK ambient_light_block_con
 	$$ = $4;
 	if (!$2.empty())
 		$$.identifier = $2;
-	std::cout << "got ambient light block: " << $$ << std::endl;
 }
 
  // Adding the camera block definition
@@ -214,15 +185,16 @@ camera_block_content_list:
 			$$.view($2.view_dir);
 		if ($2.up_dir.has_value())
 			$$.up(*$2.up_dir);
-		if ($2.fov_rad.has_value())
-			$$.fov(*$2.fov_rad);
+		if ($2.fov_rad.has_value()) {
+			$$.fov_rad = $2.fov_rad;
+			$$.tan_fov = $2.tan_fov;
+		}
 	}
 
 camera_block: CAMERA identifier OPEN_BLOCK camera_block_content_list CLOSE_BLOCK {
 	$$ = $4;
 	if (!$2.empty())
 		$$.identifier = $2;
-	std::cout << "got camera block: " << $$ << std::endl;
 }
 
  // Adding the material block object definition
@@ -242,7 +214,6 @@ material_block: MATERIAL ID material_block_object {
 	$$ = $3;
 	if (!$2.empty())
 		$$.identifier = $2;
-	std::cout << "got material block: " << $$ << std::endl;
 }
 
  // Adding the sphere block object definition
@@ -253,7 +224,10 @@ sphere_block_content:
 	position_line { Sphere s; s.setPosition($1); $$ = s; }
 	| material_line_id { Sphere s; s.setMaterial($1); $$ = s; }
 	| material_line_obj { Sphere s; s.setMaterial($1); $$ = s; }
-	| radius_line { Sphere s; s.setRadius($1); $$ = s; }
+	| radius_line { Sphere s;
+		s.setRadius($1);
+		$$ = s;
+		}
 
 sphere_block_content_list:
 	sphere_block_content { $$ = $1; }
@@ -272,7 +246,6 @@ sphere_block: SPHERE identifier OPEN_BLOCK sphere_block_content_list CLOSE_BLOCK
 	$$ = $4;
 	if (!$2.empty())
 		$$.identifier = $2;
-	std::cout << "got sphere block: " << $$ << std::endl;
 }
 %%
 

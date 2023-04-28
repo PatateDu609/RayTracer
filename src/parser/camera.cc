@@ -1,8 +1,10 @@
-#include "camera.hpp"
+#include "parser/camera.hpp"
+#include "parser/scene.hpp"
 #include <cmath>
 #include <vector>
 #include <sstream>
 #include <iomanip>
+#include <cmath>
 
 const Vector Camera::default_up{0, 1, 0};
 const double Camera::default_fov = M_PI_2;
@@ -52,19 +54,22 @@ double Camera::fov() const {
 
 
 void Camera::position(const Vector &p) {
-	pos     = p;
+	pos = p;
+	pos.normalize();
 	pos_set = true;
 }
 
 
 void Camera::view(const Vector &v) {
-	view_dir     = v;
+	view_dir = v;
+	view_dir.normalize();
 	view_dir_set = true;
 }
 
 
 void Camera::up(const Vector &u) {
 	up_dir = u;
+	up_dir->normalize();
 }
 
 
@@ -75,11 +80,13 @@ void Camera::reset_up() {
 
 void Camera::fov(double deg) {
 	fov_rad = angle_deg_to_rad(deg);
+	tan_fov = std::tan(*fov_rad / 2);
 }
 
 
 void Camera::reset_fov() {
 	fov_rad.reset();
+	tan_fov = std::tan(default_fov / 2);
 }
 
 
@@ -129,4 +136,17 @@ std::ostream &operator<<(std::ostream &os, const Camera &cam) {
 		os << ", " << parts[i];
 
 	return os << "}";
+}
+
+
+Ray Camera::cast_ray(const Tuple<double, 2> &pixel_coord) const {
+	uint32_t w           = Scene::resolution().width();
+	uint32_t h           = Scene::resolution().height();
+	double   aspectRatio = Scene::resolution().aspect_ratio();
+
+	double x = pixel_coord[0] - w  / 2;
+	double y = pixel_coord[1] - h / 2;
+	double z = - w / 2 * tan_fov * aspectRatio;
+
+	return Ray(Vector(0, 0, 0), Vector(x, y, z));
 }

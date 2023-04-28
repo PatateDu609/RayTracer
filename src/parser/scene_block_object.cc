@@ -1,4 +1,4 @@
-#include "scene_block_object.hpp"
+#include "parser/scene_block_object.hpp"
 
 
 SceneBlockObject::SceneBlockObject(const std::string &id) : identifier(id) {

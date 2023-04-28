@@ -19,7 +19,7 @@ public:
 	void z(double val);
 
 	[[nodiscard]] double norm() const;
-	void normalize();
+	Vector & normalize();
 
 	Vector operator+(const Vector& other) const;
 	Vector& operator+=(const Vector& other);

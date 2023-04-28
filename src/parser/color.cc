@@ -1,4 +1,4 @@
-#include "color.hpp"
+#include "parser/color.hpp"
 
 
 Color::Color() : Color(0, 0, 0) {

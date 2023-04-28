@@ -1,7 +1,7 @@
-#include "resolution.hpp"
+#include "parser/resolution.hpp"
 
 Resolution::Resolution(uint32_t w, uint32_t h) : tuple{w, h} {
-
+	update_ratio();
 }
 
 
@@ -20,13 +20,27 @@ std::pair<uint32_t, uint32_t> Resolution::size() const {
 }
 
 
+double Resolution::aspect_ratio() const {
+	return ratio;
+}
+
+
 void Resolution::width(uint32_t val) {
 	tuple[0] = val;
+	update_ratio();
 }
 
 
 void Resolution::height(uint32_t val) {
 	tuple[1] = val;
+	update_ratio();
+}
+
+void Resolution::update_ratio() {
+	if (tuple[0] && tuple[1])
+		ratio = static_cast<double>(tuple[0]) / static_cast<double>(tuple[1]);
+	else
+		ratio = 0;
 }
 
 std::ostream& operator<<(std::ostream& os, const Resolution& r) {

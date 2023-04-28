@@ -12,14 +12,15 @@ ambient_light ambient_light_id {
 }
 
 camera cam12 {
-	position = (123, 123, 123)
+	position = (0, 0, 0)
 	view_direction = (1, 1, 0)
+	fov = 160
 }
 
 sphere {
-	position = (12, 12, -56)
-	radius = 54
+	position = (0, 0, -20)
+	radius = 10
 	material = {
-		diffuse = (123, 56, 52)
+		diffuse = (123, 0, 52)
 	}
 }

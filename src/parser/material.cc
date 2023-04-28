@@ -1,4 +1,4 @@
-#include "material.hpp"
+#include "parser/material.hpp"
 
 
 Material::Material() : diffuse(0, 0, 0), diffuse_set(false) {

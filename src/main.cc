@@ -1,7 +1,13 @@
 #include <iostream>
 #include <sstream>
 #include "parser.hpp"
-#include "scene.hpp"
+#include "parser/scene.hpp"
+#include "engine/renderer.hpp"
+
+#include <stb_image_write.h>
+
+#define DEFAULT_IMG_COMP 3
+
 
 static FILE *open_file(int ac, char **av) {
 	if (ac == 1) {
@@ -20,7 +26,8 @@ static FILE *open_file(int ac, char **av) {
 	exit(EXIT_FAILURE);
 }
 
-int main(int ac, char **av) {
+
+static void parse_scene(int ac, char **av) {
 	yyscan_t scanner;
 	yylex_init(&scanner);
 	yyset_in(open_file(ac, av), scanner);
@@ -29,5 +36,31 @@ int main(int ac, char **av) {
 	parser.parse();
 
 	yylex_destroy(scanner);
+}
+
+
+static void output_png(const std::string &path, const std::vector<uint8_t> &image) {
+	uint32_t w = Scene::resolution().width();
+	uint32_t h = Scene::resolution().height();
+
+	stbi_write_png(path.c_str(), w, h, DEFAULT_IMG_COMP, image.data(), w * DEFAULT_IMG_COMP);
+}
+
+
+int main(int ac, char **av) {
+	parse_scene(ac, av);
+
+	const std::vector<Color> &colors = render();
+
+	std::vector<uint8_t> res;
+	res.reserve(colors.size() * DEFAULT_IMG_COMP);
+
+	for (const Color& c : colors) {
+		res.push_back(c.r());
+		res.push_back(c.g());
+		res.push_back(c.b());
+	}
+
+	output_png("result.png", res);
 	return 0;
 }

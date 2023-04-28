@@ -6,9 +6,10 @@
 #include <array>
 #include <iostream>
 
-template <typename T, size_t size>
+template<typename T, size_t size>
 struct Tuple : public std::array<T, size> {
 };
+
 
 template<typename T, size_t size>
 std::ostream &operator<<(std::ostream &os, const Tuple<T, size> &t) {
@@ -21,6 +22,5 @@ std::ostream &operator<<(std::ostream &os, const Tuple<T, size> &t) {
 
 	return os << ")";
 }
-
 
 #endif

@@ -1,4 +1,4 @@
-#include "scene.hpp"
+#include "parser/scene.hpp"
 #include <sstream>
 
 std::unique_ptr<Scene> Scene::scene_instance{};

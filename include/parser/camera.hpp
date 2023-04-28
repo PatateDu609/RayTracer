@@ -3,6 +3,7 @@
 
 #include "scene_block_object.hpp"
 #include "vector.hpp"
+#include "engine/ray.hpp"
 
 double angle_deg_to_rad(double deg);
 double angle_rad_to_deg(double rad);
@@ -26,6 +27,8 @@ public:
 	void fov(double deg);
 	void reset_fov();
 
+	Ray cast_ray(const Tuple<double, 2>& pixel_coord) const;
+
 private:
 	static const Vector default_up;
 	static const double default_fov;
@@ -39,6 +42,7 @@ private:
 	std::optional<Vector> up_dir;
 
 	std::optional<double> fov_rad;
+	double tan_fov;
 
 	friend std::ostream &operator<<(std::ostream& os, const Camera& cam);
 	friend class yy::parser;

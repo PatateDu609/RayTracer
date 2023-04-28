@@ -1,4 +1,4 @@
-#include "ambient_light.hpp"
+#include "parser/ambient_light.hpp"
 
 
 AmbientLight::AmbientLight(const std::string &identifier) : Light(identifier) {

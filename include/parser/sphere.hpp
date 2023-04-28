@@ -4,10 +4,24 @@
 #include "scene_block_object.hpp"
 #include "material.hpp"
 #include "vector.hpp"
+#include "engine/ray.hpp"
 #include <variant>
+#include <memory>
+
+struct IntersectionMetadata {
+	IntersectionMetadata(const Ray& r, double t);
+
+	Vector normal;
+	Vector hit;
+	Material mat;
+	double t;
+	const Ray& r;
+};
 
 class Sphere : public SceneBlockObject {
 public:
+	Sphere& operator=(const Sphere& other) = default;
+
 	[[nodiscard]] const Vector &getPosition() const;
 	[[nodiscard]] std::variant<Material, std::string> getMaterial() const;
 	[[nodiscard]] double getRadius() const;
@@ -18,16 +32,21 @@ public:
 	void resetMaterial();
 	void setRadius(double r);
 
+	std::shared_ptr<IntersectionMetadata> intersect(const Ray& r) const;
+
 private:
 	static const Material default_material;
 
 	Vector position;
-	bool   position_set;
+	bool   position_set{false};
 
 	std::optional<std::variant<Material, std::string>> mat;
 
 	double radius;
-	bool   radius_set;
+	double radius_2;
+	bool   radius_set{false};
+
+	std::shared_ptr<IntersectionMetadata> make_metadata(const Ray& r, double t) const;
 
 	friend class yy::parser;
 	friend std::ostream &operator<<(std::ostream& os, const Sphere& s);

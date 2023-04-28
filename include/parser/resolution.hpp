@@ -15,6 +15,7 @@ public:
 
 	[[nodiscard]] uint32_t width() const;
 	[[nodiscard]] uint32_t height() const;
+	[[nodiscard]] double aspect_ratio() const;
 	[[nodiscard]] std::pair<uint32_t, uint32_t> size() const;
 
 	void width(uint32_t val);
@@ -22,6 +23,10 @@ public:
 
 private:
 	Tuple<uint32_t, 2> tuple;
+	double ratio;
+
+	void update_ratio();
+
 	friend std::ostream &operator<<(std::ostream &os, const Resolution &r);
 };
 

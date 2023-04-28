@@ -1,4 +1,4 @@
-#include "point_light.hpp"
+#include "parser/point_light.hpp"
 
 
 PointLight::PointLight(const std::string &id) : Light(id) {
