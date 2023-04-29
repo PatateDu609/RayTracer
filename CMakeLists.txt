@@ -32,6 +32,7 @@ add_flex_bison_dependency(LEXER PARSER)
 set(SRCS
 		${LEXER_OUT} ${PARSER_OUT}
 		${SRC_PATH}/parser/color.cc
+		${SRC_PATH}/parser/object.cc
 		${SRC_PATH}/maths/vector.cc
 		${SRC_PATH}/maths/matrix.cc
 		${SRC_PATH}/main.cc
@@ -52,6 +53,7 @@ set(SRCS
 set(INCLUDE_FILES
 		${LEXER_HEADER_OUT} ${PARSER_HEADER_OUT}
 		${INCLUDE_PATH}/parser/color.hpp
+		${INCLUDE_PATH}/parser/object.hpp
 		${INCLUDE_PATH}/syntax_highlighting.hpp
 		${INCLUDE_PATH}/maths/vector.hpp
 		${INCLUDE_PATH}/parser/point_light.hpp

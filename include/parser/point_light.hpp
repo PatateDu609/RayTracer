@@ -13,7 +13,7 @@ public:
 	void setPosition(const Vector3 &pos);
 	[[nodiscard]] const Vector3 &getPosition() const;
 
-	[[nodiscard]] Color compute_lighting(const std::shared_ptr<IntersectionMetadata> &metadata) const final;
+	[[nodiscard]] Color compute_lighting(const std::shared_ptr<Object::IntersectionMetadata> &metadata) const final;
 
 private:
 	bool position_set{};

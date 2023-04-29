@@ -8,10 +8,10 @@ Tuple<double, 2> make_pixel_tuple(double x, double y) {
 }
 
 
-std::shared_ptr<IntersectionMetadata> intersection(const Ray &ray) {
+std::shared_ptr<Object::IntersectionMetadata> intersection(const Ray &ray) {
 	const auto &spheres = Scene::spheres();
 
-	std::shared_ptr<IntersectionMetadata> intersection_metadata;
+	std::shared_ptr<Object::IntersectionMetadata> intersection_metadata;
 	for (size_t                           i = 0; i < spheres.size(); i++) {
 		const auto &current_intersection_metadata = spheres[i]->intersect(ray);
 		if (!current_intersection_metadata)

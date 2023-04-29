@@ -7,7 +7,7 @@ AmbientLight::AmbientLight(const std::string &identifier) : Light(identifier) {
 }
 
 
-Color AmbientLight::compute_lighting(const std::shared_ptr<IntersectionMetadata> &metadata) const {
+Color AmbientLight::compute_lighting(const std::shared_ptr<Object::IntersectionMetadata> &metadata) const {
 	Color d_object_color = metadata->mat.getDiffuse();
 	Color d_light_color  = getColor();
 

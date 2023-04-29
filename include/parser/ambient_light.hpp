@@ -7,7 +7,7 @@ class AmbientLight final : public Light {
 public:
 	explicit AmbientLight(const std::string& identifier = "");
 
-	[[nodiscard]] Color compute_lighting(const std::shared_ptr<IntersectionMetadata> &metadata) const final;
+	[[nodiscard]] Color compute_lighting(const std::shared_ptr<Object::IntersectionMetadata> &metadata) const final;
 
 	friend class yy::parser;
 	friend SyntaxHighlighter& operator<<(SyntaxHighlighter& sh, const AmbientLight &lt);

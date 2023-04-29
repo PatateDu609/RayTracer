@@ -4,9 +4,7 @@
 #include <vector>
 #include "scene_block_object.hpp"
 #include "color.hpp"
-#include "sphere.hpp"
-
-#define DEFAULT_LIGHT_INTENSITY 250
+#include "object.hpp"
 
 class Light : public SceneBlockObject {
 public:
@@ -26,7 +24,7 @@ public:
 	void resetIntensity();
 
 	[[nodiscard]]
-	virtual Color compute_lighting(const std::shared_ptr<IntersectionMetadata> &metadata) const = 0;
+	virtual Color compute_lighting(const std::shared_ptr<Object::IntersectionMetadata> &metadata) const = 0;
 
 private:
 	static const Color  default_color;
@@ -39,7 +37,7 @@ protected:
 	friend class yy::parser;
 };
 
-Color
-compute_lighting(const std::vector<std::shared_ptr<Light>> &lts, const std::shared_ptr<IntersectionMetadata> &metadata);
+Color compute_lighting(const std::vector<std::shared_ptr<Light>> &lts,
+                       const std::shared_ptr<Object::IntersectionMetadata> &metadata);
 
 #endif //RAYTRACER_INCLUDE_LIGHT_HPP

@@ -19,7 +19,7 @@ void PointLight::setPosition(const Vector3 &pos) {
 }
 
 
-Color PointLight::compute_lighting(const std::shared_ptr<IntersectionMetadata> &metadata) const {
+Color PointLight::compute_lighting(const std::shared_ptr<Object::IntersectionMetadata> &metadata) const {
 	Vector3 i_l            = (position - metadata->hit).normalize(); // Intersection hit point ----> Light position
 	double  dot            = std::max(0., (-i_l).dot(metadata->normal));
 	Color   d_object_color = metadata->mat.getDiffuse();

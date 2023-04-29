@@ -50,6 +50,9 @@ And the following block objects.
 | camera        | &check;  | Gives the actual point of view of the world                      | Camera **Object**        |
 | sphere        | -        | Sets a sphere object using a sphere-ray intersection             | Sphere **Object**        |
 | material      | -        | Creates a material that should be identified as explained above. | Material **Object**      |
+| plane         | -        | Creates an infinite plane with the plane formula.                | Plane **Object**         |
+| box           | -        | Creates a cube in the scene, its implemented as a box.           | Plane **Object**         |
+| triangle      | -        | Creates a triangle.                                              | Plane **Object**         |
 
 ### Point Light Block Object
 
@@ -86,8 +89,33 @@ And the following block objects.
 ### Material Block Object
 
 Material blocks **MUST** be identified using an identifier. The **only** exception to this rule is when materials are
-specified as a property of an other object.
+specified as a property of other objects.
 
 | Property name | Required | Description                                                             | Value type                                | Default Value |
 |---------------|----------|-------------------------------------------------------------------------|-------------------------------------------|---------------|
 | diffuse       | &check;  | Add a diffuse color to the material. The model used is the Phong model. | **Tuple** of 3 integers between 0 and 255 | -             |
+
+### Plane Block Object
+
+| Property name | Required | Description                                          | Value type                                             | Default Value          |
+|---------------|----------|------------------------------------------------------|--------------------------------------------------------|------------------------|
+| point         | &check;  | Gives a point on the plane to use as its definition. | **Tuple** of 3 real numbers                            | -                      |
+| material      | -        | Sets the material of the plane.                      | Material **object** \| **ID** identifying the material | Diffuse white material |
+| normal        | &check;  | Sets the plane normal (its orientation).             | **Tuple** of 3 real numbers                            | -                      |
+
+### Box Block Object
+
+| Property name | Required | Description                                                                                | Value type                                             | Default Value          |
+|---------------|----------|--------------------------------------------------------------------------------------------|--------------------------------------------------------|------------------------|
+| p1            | &check;  | Gives one of the cube boundaries, which will be used to determine all the other boundaries | **Tuple** of 3 real numbers                            | -                      |
+| p2            | &check;  | Same as p1.                                                                                | **Tuple** of 3 real numbers                            | -                      |
+| material      | -        | Sets the material of the plane.                                                            | Material **object** \| **ID** identifying the material | Diffuse white material |
+
+### Triangle Block Object
+
+| Property name | Required | Description                             | Value type                                             | DefaultValue           |
+|---------------|----------|-----------------------------------------|--------------------------------------------------------|------------------------|
+| p1            | &check;  | Sets one of the points of the triangle. | **Tuple** of 3 real numbers                            | -                      |
+| p2            | &check;  | Sets one of the points of the triangle. | **Tuple** of 3 real numbers                            | -                      |
+| p3            | &check;  | Sets one of the points of the triangle. | **Tuple** of 3 real numbers                            | -                      |
+| material      | -        | Sets the material of the triangle.      | Material **object** \| **ID** identifying the material | Default white material |

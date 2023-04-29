@@ -3,15 +3,8 @@
 #include "syntax_highlighting.hpp"
 #include <string>
 #include <sstream>
-#include <vector>
 #include <cmath>
 
-const Material Sphere::default_material(Color(255, 255, 255));
-
-
-IntersectionMetadata::IntersectionMetadata(const Ray &ray, double param) : t(param), r(ray) {
-	hit = r(t);
-}
 
 
 const Vector3 &Sphere::getPosition() const {
@@ -19,13 +12,6 @@ const Vector3 &Sphere::getPosition() const {
 }
 
 
-std::variant<Material, std::string> Sphere::getMaterial() const {
-	if (mat)
-		return *mat;
-
-	std::variant<Material, std::string> res(default_material);
-	return res;
-}
 
 
 double Sphere::getRadius() const {
@@ -36,21 +22,6 @@ double Sphere::getRadius() const {
 void Sphere::setPosition(const Vector3 &p) {
 	position     = p;
 	position_set = true;
-}
-
-
-void Sphere::setMaterial(const Material &m) {
-	mat = m;
-}
-
-
-void Sphere::setMaterial(const std::string &material_id) {
-	mat = material_id;
-}
-
-
-void Sphere::resetMaterial() {
-	mat.reset();
 }
 
 
@@ -88,7 +59,7 @@ SyntaxHighlighter &operator<<(SyntaxHighlighter &sh, const Sphere &s) {
 }
 
 
-std::shared_ptr<IntersectionMetadata> Sphere::intersect(const Ray &r) const {
+std::shared_ptr<Object::IntersectionMetadata> Sphere::intersect(const Ray &r) const {
 	auto ro_center = r.origin - position; // ray origin -> sphere center
 
 	double a = 1;
@@ -120,7 +91,7 @@ std::shared_ptr<IntersectionMetadata> Sphere::intersect(const Ray &r) const {
 }
 
 
-std::shared_ptr<IntersectionMetadata> Sphere::make_metadata(const Ray &r, double t) const {
+std::shared_ptr<Object::IntersectionMetadata> Sphere::make_metadata(const Ray &r, double t) const {
 	IntersectionMetadata metadata(r, t);
 
 	metadata.normal = (metadata.hit - position).normalize();
