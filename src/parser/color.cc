@@ -106,9 +106,9 @@ void Color::albedo_b(double val) {
 
 Color Color::operator+(const Color &other) const {
 	Color c(
-			std::max(0., std::min(255., (r() + other.r()) / 2.)),
-			std::max(0., std::min(255., (g() + other.g()) / 2.)),
-			std::max(0., std::min(255., (b() + other.b()) / 2.))
+			std::max(0, std::min(255, r() + other.r())),
+			std::max(0, std::min(255, g() + other.g())),
+			std::max(0, std::min(255, b() + other.b()))
 	);
 
 	return c;
@@ -119,6 +119,53 @@ Color &Color::operator+=(const Color &c) {
 	return *this = *this + c;
 }
 
+
+Color Color::operator*(double lambda) const {
+	Color c;
+
+	c.albedo_r(std::max(0., std::min(1., albedo_r() * lambda)));
+	c.albedo_g(std::max(0., std::min(1., albedo_g() * lambda)));
+	c.albedo_b(std::max(0., std::min(1., albedo_b() * lambda)));
+
+	return c;
+}
+
+
+Color &Color::operator*=(double lambda) {
+	return *this = *this * lambda;
+}
+
+
+Color operator*(double lambda, const Color &c) {
+	return c * lambda;
+}
+
+
+Color Color::operator*(const Color &other) const {
+	Color c;
+
+	c.albedo_r(std::max(0., std::min(1., albedo_r() * other.albedo_r())));
+	c.albedo_g(std::max(0., std::min(1., albedo_g() * other.albedo_g())));
+	c.albedo_b(std::max(0., std::min(1., albedo_b() * other.albedo_b())));
+
+	return c;
+}
+
+
+Color &Color::operator*=(const Color &other) {
+	return *this = *this * other;
+}
+
+Color Color::operator/(double lambda) const
+{
+	Color c;
+
+	c.albedo_r(std::max(0., std::min(1., albedo_r() / lambda)));
+	c.albedo_g(std::max(0., std::min(1., albedo_g() / lambda)));
+	c.albedo_b(std::max(0., std::min(1., albedo_b() / lambda)));
+
+	return c;
+}
 
 std::ostream &operator<<(std::ostream &os, const Color &c) {
 	return os << "Color(" << +c.r() << ", " << +c.g() << ", " << +c.b() << ")";

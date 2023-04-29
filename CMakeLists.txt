@@ -30,32 +30,38 @@ endif ()
 add_flex_bison_dependency(LEXER PARSER)
 
 set(SRCS
+		${SRC_PATH}/main.cc
+		${SRC_PATH}/stb_implementation.c
+		${SRC_PATH}/syntax_highlighting.cc
+
 		${LEXER_OUT} ${PARSER_OUT}
+
 		${SRC_PATH}/parser/color.cc
 		${SRC_PATH}/parser/object.cc
-		${SRC_PATH}/maths/vector.cc
-		${SRC_PATH}/maths/matrix.cc
-		${SRC_PATH}/main.cc
 		${SRC_PATH}/parser/point_light.cc
 		${SRC_PATH}/parser/scene.cc
 		${SRC_PATH}/parser/scene_block_object.cc
 		${SRC_PATH}/parser/resolution.cc
-		${SRC_PATH}/syntax_highlighting.cc
 		${SRC_PATH}/parser/ambient_light.cc
 		${SRC_PATH}/parser/light.cc
 		${SRC_PATH}/parser/material.cc
 		${SRC_PATH}/parser/camera.cc
 		${SRC_PATH}/parser/sphere.cc
-		${SRC_PATH}/stb_implementation.c
+		${SRC_PATH}/parser/plane.cc
+		${SRC_PATH}/parser/box.cc
+		${SRC_PATH}/parser/triangle.cc
+
+		${SRC_PATH}/maths/vector.cc
+		${SRC_PATH}/maths/matrix.cc
+
 		${SRC_PATH}/engine/renderer.cc
 		${SRC_PATH}/engine/ray.cc
 		)
 set(INCLUDE_FILES
 		${LEXER_HEADER_OUT} ${PARSER_HEADER_OUT}
+
 		${INCLUDE_PATH}/parser/color.hpp
 		${INCLUDE_PATH}/parser/object.hpp
-		${INCLUDE_PATH}/syntax_highlighting.hpp
-		${INCLUDE_PATH}/maths/vector.hpp
 		${INCLUDE_PATH}/parser/point_light.hpp
 		${INCLUDE_PATH}/parser/scene.hpp
 		${INCLUDE_PATH}/parser/scene_block_object.hpp
@@ -65,6 +71,13 @@ set(INCLUDE_FILES
 		${INCLUDE_PATH}/parser/material.hpp
 		${INCLUDE_PATH}/parser/camera.hpp
 		${INCLUDE_PATH}/parser/sphere.hpp
+		${INCLUDE_PATH}/parser/plane.hpp
+		${INCLUDE_PATH}/parser/box.hpp
+		${INCLUDE_PATH}/parser/triangle.hpp
+
+		${INCLUDE_PATH}/syntax_highlighting.hpp
+		${INCLUDE_PATH}/maths/vector.hpp
+
 		${INCLUDE_PATH}/engine/renderer.hpp
 		${INCLUDE_PATH}/engine/ray.hpp
 		)

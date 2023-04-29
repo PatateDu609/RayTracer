@@ -9,17 +9,17 @@ Tuple<double, 2> make_pixel_tuple(double x, double y) {
 
 
 std::shared_ptr<Object::IntersectionMetadata> intersection(const Ray &ray) {
-	const auto &spheres = Scene::spheres();
+	const auto &objs = Scene::objects();
 
 	std::shared_ptr<Object::IntersectionMetadata> intersection_metadata;
-	for (size_t                           i = 0; i < spheres.size(); i++) {
-		const auto &current_intersection_metadata = spheres[i]->intersect(ray);
+	for (const auto& obj : objs) {
+		const auto &current_intersection_metadata = obj->intersect(ray);
 		if (!current_intersection_metadata)
 			continue;
 
 		if (!intersection_metadata)
 			intersection_metadata = current_intersection_metadata;
-		else if (intersection_metadata->t < current_intersection_metadata->t) {
+		else if (current_intersection_metadata->t < intersection_metadata->t) {
 			intersection_metadata = current_intersection_metadata;
 		}
 	}

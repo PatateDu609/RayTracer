@@ -50,10 +50,10 @@ void SceneParserProxy::append_point_light(const PointLight &point_light) {
 }
 
 
-void SceneParserProxy::append_sphere(const Sphere &sphere) {
+void SceneParserProxy::append_object(const std::shared_ptr<Object>& obj) {
 	if (!Scene::scene_instance)
 		Scene::scene_instance = std::make_unique<Scene>(Scene());
-	Scene::scene_instance->sps.emplace_back(new Sphere(sphere));
+	Scene::scene_instance->objs.emplace_back(obj);
 }
 
 
@@ -94,10 +94,10 @@ std::vector<std::shared_ptr<Light>> Scene::lights() {
 }
 
 
-const std::vector<std::shared_ptr<Sphere>> &Scene::spheres() {
+const std::vector<std::shared_ptr<Object>> &Scene::objects() {
 	if (!Scene::scene_instance)
 		throw NoSceneLoadedException();
-	return Scene::scene_instance->sps;
+	return Scene::scene_instance->objs;
 }
 
 
@@ -124,16 +124,15 @@ void dump_scene() {
 		sh << *s->ambient_lighting << SyntaxHighlighter::endl;
 	if (s->cam)
 		sh << *s->cam << SyntaxHighlighter::endl;
+	sh << SyntaxHighlighter::endl;
+	for (const auto &mat: s->mats) {
+		sh << *mat.second << SyntaxHighlighter::endl;
+	}
 
 	for (const auto &l: s->pt_lights) {
 		sh << *l << SyntaxHighlighter::endl;
 	}
-	std::cout << std::endl;
-	for (const auto &sp: s->sps) {
-		sh << *sp << SyntaxHighlighter::endl;
-	}
-	std::cout << std::endl;
-	for (const auto &mat: s->mats) {
-		std::cout << *mat.second << std::endl;
+	for (const auto &obj: s->objs) {
+		sh << obj << SyntaxHighlighter::endl;
 	}
 }

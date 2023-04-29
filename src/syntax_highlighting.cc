@@ -32,6 +32,9 @@ SyntaxHighlighter::symbol_category SyntaxHighlighter::get_symbol_category(symbol
 		case symbol_kind::S_AMBIENT_LIGHT:
 		case symbol_kind::S_CAMERA:
 		case symbol_kind::S_SPHERE:
+		case symbol_kind::S_PLANE:
+		case symbol_kind::S_BOX:
+		case symbol_kind::S_TRIANGLE:
 			return BLOCK_KEYWORD;
 
 		case symbol_kind::S_MATERIAL: {
@@ -48,6 +51,11 @@ SyntaxHighlighter::symbol_category SyntaxHighlighter::get_symbol_category(symbol
 		case symbol_kind::S_FOV:
 		case symbol_kind::S_RADIUS:
 		case symbol_kind::S_DIFFUSE:
+		case symbol_kind::S_POINT:
+		case symbol_kind::S_P1:
+		case symbol_kind::S_P2:
+		case symbol_kind::S_P3:
+		case symbol_kind::S_NORMAL:
 			return LINE_KEYWORD;
 
 		default:
@@ -70,7 +78,7 @@ SyntaxHighlighter::symbol_color_mapper SyntaxHighlighter::init_colors() {
 	mapping[SCALAR]                   = MAKE_ANSI(158);
 	mapping[PUNCTUATION]              = MAKE_ANSI(225);
 	mapping[BLOCK_TUPLE_DELIMITATION] = MAKE_ANSI(224);
-	mapping[BLOCK_IDENTIFIER]         = mapping[CLEAR]+"\033[4m" + MAKE_ANSI(104);
+	mapping[BLOCK_IDENTIFIER]         = mapping[CLEAR] + "\033[4m" + MAKE_ANSI(104);
 	mapping[BLOCK_KEYWORD]            = MAKE_BOLD_ANSI(99);
 	mapping[LINE_KEYWORD]             = MAKE_BOLD_ANSI(202);
 
@@ -92,19 +100,27 @@ SyntaxHighlighter::str_symbol_mapper SyntaxHighlighter::init_symbols() {
 	mapping[","] = symbol_kind::S_COMMA;
 	mapping["="] = symbol_kind::S_EQUAL;
 
-	mapping["resolution"]     = symbol_kind::S_RESOLUTION;
-	mapping["point_light"]    = symbol_kind::S_POINT_LIGHT;
-	mapping["ambient_light"]  = symbol_kind::S_AMBIENT_LIGHT;
-	mapping["camera"]         = symbol_kind::S_CAMERA;
-	mapping["sphere"]         = symbol_kind::S_SPHERE;
-	mapping["position"]       = symbol_kind::S_POSITION;
-	mapping["color"]          = symbol_kind::S_COLOR;
-	mapping["intensity"]      = symbol_kind::S_INTENSITY;
-	mapping["view_dir"] = symbol_kind::S_VIEW_DIRECTION;
-	mapping["fov"]            = symbol_kind::S_FOV;
-	mapping["material"]       = symbol_kind::S_MATERIAL;
-	mapping["radius"]         = symbol_kind::S_RADIUS;
-	mapping["diffuse"]        = symbol_kind::S_DIFFUSE;
+	mapping["resolution"]    = symbol_kind::S_RESOLUTION;
+	mapping["point_light"]   = symbol_kind::S_POINT_LIGHT;
+	mapping["ambient_light"] = symbol_kind::S_AMBIENT_LIGHT;
+	mapping["camera"]        = symbol_kind::S_CAMERA;
+	mapping["sphere"]        = symbol_kind::S_SPHERE;
+	mapping["position"]      = symbol_kind::S_POSITION;
+	mapping["color"]         = symbol_kind::S_COLOR;
+	mapping["intensity"]     = symbol_kind::S_INTENSITY;
+	mapping["view_dir"]      = symbol_kind::S_VIEW_DIRECTION;
+	mapping["plane"]         = symbol_kind::S_PLANE;
+	mapping["box"]           = symbol_kind::S_BOX;
+	mapping["triangle"]      = symbol_kind::S_TRIANGLE;
+	mapping["point"]         = symbol_kind::S_POINT;
+	mapping["normal"]        = symbol_kind::S_NORMAL;
+	mapping["p1"]            = symbol_kind::S_P1;
+	mapping["p2"]            = symbol_kind::S_P2;
+	mapping["p3"]            = symbol_kind::S_P3;
+	mapping["fov"]           = symbol_kind::S_FOV;
+	mapping["material"]      = symbol_kind::S_MATERIAL;
+	mapping["radius"]        = symbol_kind::S_RADIUS;
+	mapping["diffuse"]       = symbol_kind::S_DIFFUSE;
 
 	return mapping;
 }
@@ -138,6 +154,22 @@ std::string SyntaxHighlighter::stringify_keyword(symbol_kind kind, symbol_catego
 			return "radius";
 		case symbol_kind::S_DIFFUSE:
 			return "diffuse";
+		case symbol_kind::S_PLANE:
+			return "Plane";
+		case symbol_kind::S_BOX:
+			return "Box";
+		case symbol_kind::S_TRIANGLE:
+			return "Triangle";
+		case symbol_kind::S_POINT:
+			return "point";
+		case symbol_kind::S_NORMAL:
+			return "normal";
+		case symbol_kind::S_P1:
+			return "p1";
+		case symbol_kind::S_P2:
+			return "p2";
+		case symbol_kind::S_P3:
+			return "p3";
 		default:
 			return "";
 	}
@@ -149,6 +181,7 @@ SyntaxHighlighter::SyntaxHighlighter(std::ostream &out) :
 		last_sym(symbol_kind::S_YYACCEPT),
 		os(out) {
 }
+
 
 SyntaxHighlighter::~SyntaxHighlighter() {
 	os << colors.at(CLEAR);
@@ -253,6 +286,9 @@ void SyntaxHighlighter::update_accepting_for_current_block() {
 		case symbol_kind::S_CAMERA:
 			accepting = symbol_kind::S_camera_block_content;
 			break;
+		case symbol_kind::S_PLANE:
+			accepting = symbol_kind::S_plane_block_content;
+			break;
 		default:
 			accepting = symbol_kind::S_YYUNDEF;
 			break;
@@ -287,6 +323,7 @@ void SyntaxHighlighter::update_state(SyntaxHighlighter::symbol_kind kind, Syntax
 		case symbol_kind::S_POINT_LIGHT:
 		case symbol_kind::S_AMBIENT_LIGHT:
 		case symbol_kind::S_CAMERA:
+		case symbol_kind::S_PLANE:
 		case symbol_kind::S_SPHERE: {
 			accepting = symbol_kind::S_identifier;
 			blocks.push(kind);

@@ -13,11 +13,6 @@ Vector3::Vector3(double x, double y, double z) : _internal{x, y, z}, _norm(0) {
 }
 
 
-Vector3::Vector3(const Vector3 &c) : Vector3() {
-	*this = c;
-}
-
-
 double Vector3::x() const {
 	return _internal[0];
 }

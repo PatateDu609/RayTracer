@@ -20,18 +20,11 @@ void PointLight::setPosition(const Vector3 &pos) {
 
 
 Color PointLight::compute_lighting(const std::shared_ptr<Object::IntersectionMetadata> &metadata) const {
-	Vector3 i_l            = (position - metadata->hit).normalize(); // Intersection hit point ----> Light position
-	double  dot            = std::max(0., (-i_l).dot(metadata->normal));
-	Color   d_object_color = metadata->mat.getDiffuse();
-	Color   d_light_color  = getColor();
+	Vector3 L       = position - metadata->hit; // Intersection hit point ----> Light position
+	double  L_norm2 = std::pow(L.norm(), 2);
+	double  L_dot_N = std::max(L.normalize().dot(metadata->normal.normalize()), 0.);
 
-	Color res;
-
-	double common = (getIntensity() * dot) / std::pow(i_l.norm(), 2);
-
-	res.albedo_r(std::max(0., std::min(1., d_object_color.albedo_r() * d_light_color.albedo_r() * common)));
-	res.albedo_g(std::max(0., std::min(1., d_object_color.albedo_g() * d_light_color.albedo_g() * common)));
-	res.albedo_b(std::max(0., std::min(1., d_object_color.albedo_b() * d_light_color.albedo_b() * common)));
+	Color res = 5000 * ((metadata->mat.getDiffuse() / M_PI) * getIntensity() * getColor() * (L_dot_N / L_norm2));
 
 	return res;
 }

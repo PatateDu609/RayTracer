@@ -17,7 +17,6 @@ private:
 	bool diffuse_set{false};
 
 	friend yy::parser;
-	friend std::ostream &operator<<(std::ostream& os, const Material &mat);
 	friend SyntaxHighlighter& operator<<(SyntaxHighlighter& sh, const Material& mat);
 };
 

@@ -1,4 +1,5 @@
 #include "parser/material.hpp"
+#include "syntax_highlighting.hpp"
 
 
 Material::Material() : diffuse(0, 0, 0), diffuse_set(false) {
@@ -21,19 +22,6 @@ void Material::setDiffuse(const Color &d) {
 	diffuse_set = true;
 }
 
-#include "syntax_highlighting.hpp"
-
-std::ostream &operator<<(std::ostream &os, const Material &mat) {
-	os << "Material";
-	if (mat.identifier)
-		os << "(" << *mat.identifier << ")";
-	os << "{";
-
-	if (mat.diffuse_set)
-		os << "diffuse = " << mat.diffuse;
-
-	return os << "}";
-}
 
 SyntaxHighlighter& operator<<(SyntaxHighlighter& sh, const Material& mat) {
 	sh << "Material";

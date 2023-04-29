@@ -32,7 +32,7 @@ private:
 	static void set_camera(const Camera &camera);
 
 	static void append_point_light(const PointLight &point_light);
-	static void append_sphere(const Sphere &sphere);
+	static void append_object(const std::shared_ptr<Object>& obj);
 	static void append_material(const Material &material);
 
 	friend class yy::parser;
@@ -53,7 +53,7 @@ public:
 	[[nodiscard]] static Camera &camera();
 
 	[[nodiscard]] static std::vector<std::shared_ptr<Light>> lights();
-	[[nodiscard]] static const std::vector<std::shared_ptr<Sphere>> &spheres();
+	[[nodiscard]] static const std::vector<std::shared_ptr<Object>> &objects();
 	[[nodiscard]] static std::shared_ptr<Material> material(const std::string &id);
 
 private:
@@ -66,7 +66,7 @@ private:
 
 	// Optional fields
 	std::vector<std::shared_ptr<PointLight>>         pt_lights;
-	std::vector<std::shared_ptr<Sphere>>             sps;
+	std::vector<std::shared_ptr<Object>>             objs;
 	std::map<std::string, std::shared_ptr<Material>> mats;
 
 	friend SceneParserProxy;

@@ -32,27 +32,22 @@ void Sphere::setRadius(double r) {
 }
 
 
-SyntaxHighlighter &operator<<(SyntaxHighlighter &sh, const Sphere &s) {
+SyntaxHighlighter &Sphere::dump(SyntaxHighlighter &sh) const {
 	sh << "Sphere";
-	if (s.identifier)
-		sh << *s.identifier;
+	if (identifier)
+		sh << *identifier;
 	sh << "{";
 
-	if (s.position_set)
-		sh << "position" << "=" << s.position;
+	if (position_set)
+		sh << "position" << "=" << position;
 
-	if (s.mat.has_value()) {
+	if (mat.has_value()) {
 		sh << "material" << "=";
-		const auto variant = *s.mat;
-
-		if (std::holds_alternative<std::string>(variant))
-			sh << std::get<std::string>(variant);
-		else
-			sh << std::get<Material>(variant);
+		dump_material(sh);
 	}
 
-	if (s.radius_set) {
-		sh << "radius" << "=" << s.radius << SyntaxHighlighter::endl;
+	if (radius_set) {
+		sh << "radius" << "=" << radius << SyntaxHighlighter::endl;
 	}
 
 	return sh << "}";
@@ -81,7 +76,7 @@ std::shared_ptr<Object::IntersectionMetadata> Sphere::intersect(const Ray &r) co
 		t = t1;
 
 	double t2 = minus_b_2a - delta;
-	if (t2 >= t)
+	if (t2 <= t)
 		t = t2;
 
 	if (t1 < 0 && t2 < 0)
@@ -94,16 +89,7 @@ std::shared_ptr<Object::IntersectionMetadata> Sphere::intersect(const Ray &r) co
 std::shared_ptr<Object::IntersectionMetadata> Sphere::make_metadata(const Ray &r, double t) const {
 	IntersectionMetadata metadata(r, t);
 
-	metadata.normal = (metadata.hit - position).normalize();
-
-	const auto &material = getMaterial();
-	if (std::holds_alternative<std::string>(material)) {
-		std::string mat_name = std::get<std::string>(material);
-		const auto  mat_ptr  = Scene::material(mat_name);
-		if (!mat_ptr)
-			throw std::runtime_error("Material " + mat_name + " specified not found");
-		metadata.mat = *mat_ptr;
-	} else
-		metadata.mat = std::get<Material>(material);
+	metadata.normal = (-metadata.hit + position).normalize();
+	metadata.mat = retrieveMaterialData();
 	return std::make_shared<IntersectionMetadata>(metadata);
 }

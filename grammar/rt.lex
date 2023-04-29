@@ -72,6 +72,38 @@ ID [a-z][a-z0-9A-Z_]*
 	col += std::string(yytext).length();
 	return token_kind_type::DIFFUSE;
 }
+"plane" {
+	col += std::string(yytext).length();
+	return token_kind_type::PLANE;
+}
+"box" {
+	col += std::string(yytext).length();
+	return token_kind_type::BOX;
+}
+"triangle" {
+	col += std::string(yytext).length();
+	return token_kind_type::TRIANGLE;
+}
+"point" {
+	col += std::string(yytext).length();
+	return token_kind_type::POINT;
+}
+"normal" {
+	col += std::string(yytext).length();
+	return token_kind_type::NORMAL;
+}
+"p1" {
+	col += std::string(yytext).length();
+	return token_kind_type::P1;
+}
+"p2" {
+	col += std::string(yytext).length();
+	return token_kind_type::P2;
+}
+"p3" {
+	col += std::string(yytext).length();
+	return token_kind_type::P3;
+}
 
 [+-]?{DIGIT}+ {
 	std::string yystr(yytext);

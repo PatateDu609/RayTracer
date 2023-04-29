@@ -28,10 +28,17 @@ public:
 	void resetMaterial();
 
 protected:
+	virtual SyntaxHighlighter& dump(SyntaxHighlighter& sh) const = 0;
+	void dump_material(SyntaxHighlighter& sh) const;
+
+	Material retrieveMaterialData() const;
+
 	std::optional<std::variant<Material, std::string>> mat;
 
 private:
 	static const Material default_material;
+
+	friend SyntaxHighlighter& operator<<(SyntaxHighlighter& sh, const std::shared_ptr<Object>& obj);
 };
 
 #endif //RAYTRACER_INCLUDE_PARSER_OBJECT_HPP

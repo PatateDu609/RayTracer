@@ -32,6 +32,14 @@ public:
 	Color operator+(const Color& other) const;
 	Color& operator+=(const Color& c);
 
+	Color operator*(double lambda) const;
+	Color &operator*=(double lambda);
+	Color operator*(const Color& other) const;
+	Color &operator*=(const Color& other);
+
+	Color operator/(double lambda) const;
+	Color& operator/=(double lambda);
+
 private:
 	Tuple<uint8_t, 3> _internal;
 	Tuple<double, 3> _albedo;
@@ -44,5 +52,6 @@ private:
 	friend std::ostream &operator<<(std::ostream& os, const Color& c);
 	friend SyntaxHighlighter &operator<<(SyntaxHighlighter& os, const Color& c);
 };
+Color operator*(double lambda, const Color& c);
 
 #endif

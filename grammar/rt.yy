@@ -9,15 +9,19 @@
 	#include "lexer.hpp"
 	#endif
 
+	#include "maths/vector.hpp"
+
 	#include "parser/color.hpp"
 	#include "parser/resolution.hpp"
-	#include "maths/vector.hpp"
 	#include "parser/point_light.hpp"
 	#include "parser/ambient_light.hpp"
 	#include "parser/camera.hpp"
 	#include "parser/material.hpp"
 	#include "parser/sphere.hpp"
 	#include "parser/scene.hpp"
+	#include "parser/plane.hpp"
+	#include "parser/box.hpp"
+	#include "parser/triangle.hpp"
 }
 
 %code top {
@@ -70,17 +74,29 @@
 %token MATERIAL "material"
 %token RADIUS "radius"
 %token DIFFUSE "diffuse"
+%token PLANE "plane"
+%token BOX "box"
+%token TRIANGLE "triangle"
+%token POINT "point"
+%token NORMAL "normal"
+%token P1 "p1"
+%token P2 "p2"
+%token P3 "p3"
 
 %type <Resolution> resolution_line resolution_tuple
 %type <Color> color_tuple color_line diffuse_line
-%type <Vector3> vector position_line view_direction_line
+%type <Vector3> vector position_line view_direction_line point_line p1_line p2_line p3_line normal_line
 %type <PointLight> point_light_block_content point_light_block_content_list point_light_block
 %type <AmbientLight> ambient_light_block_content ambient_light_block_content_list ambient_light_block
 %type <Camera> camera_block_content camera_block_content_list camera_block
 %type <Material> material_block_content material_block_content_list material_block material_block_object material_line_obj
-%type <Sphere> sphere_block_content sphere_block_content_list sphere_block
 %type <std::string> identifier material_line_id
 %type <double> number intensity_line fov_line radius_line
+
+%type <Sphere> sphere_block_content sphere_block_content_list sphere_block
+%type <Plane> plane_block_content plane_block_content_list plane_block
+/* %type <Box> box_block_content box_block_content_list box_block
+%type <Triangle> triangle_block_content triangle_block_content_list triangle_block */
 
 %%
 
@@ -93,7 +109,10 @@ file_object_description:
 	| camera_block { SceneParserProxy::set_camera($1); }
 	| point_light_block { SceneParserProxy::append_point_light($1); }
 	| material_block { SceneParserProxy::append_material($1); }
-	| sphere_block { SceneParserProxy::append_sphere($1); }
+	| sphere_block { SceneParserProxy::append_object(std::shared_ptr<Object>(new Sphere($1))); }
+	| plane_block { SceneParserProxy::append_object(std::shared_ptr<Object>(new Plane($1))); }
+	/* | box_block { SceneParserProxy::append_object(std::shared_ptr<Object>(new Box($1))); }
+	| triangle_block { SceneParserProxy::append_object(std::shared_ptr<Object>(new Triangle($1))); } */
 
 file_description: epsilon | file_object_description file_description
 
@@ -115,7 +134,16 @@ color_tuple: OPEN_TUPLE INT COMMA INT COMMA INT CLOSE_TUPLE { $$ = Color($2, $4,
 color_line: COLOR EQUAL color_tuple { $$ = $3; }
 vector: OPEN_TUPLE number COMMA number COMMA number CLOSE_TUPLE { $$ = Vector3($2, $4, $6); }
 position_line: POSITION EQUAL vector { $$ = $3; }
+p1_line: P1 EQUAL vector { $$ = $3; }
+p2_line: P2 EQUAL vector { $$ = $3; }
+p3_line: P3 EQUAL vector { $$ = $3; }
+point_line: POINT EQUAL vector { $$ = $3; }
+normal_line: NORMAL EQUAL vector { $$ = $3; }
 intensity_line: INTENSITY EQUAL number { $$ = $3; }
+
+
+material_line_id: MATERIAL EQUAL ID { $$ = $3; }
+material_line_obj: MATERIAL EQUAL material_block_object { $$ = $3; }
 
  // Adding the point_light block definition
 point_light_block_content:
@@ -213,8 +241,6 @@ material_block: MATERIAL ID material_block_object {
 
  // Adding the sphere block object definition
 radius_line: RADIUS EQUAL number { $$ = $3; }
-material_line_id: MATERIAL EQUAL ID { $$ = $3; }
-material_line_obj: MATERIAL EQUAL material_block_object { $$ = $3; }
 sphere_block_content:
 	position_line { Sphere s; s.setPosition($1); $$ = s; }
 	| material_line_id { Sphere s; s.setMaterial($1); $$ = s; }
@@ -242,6 +268,33 @@ sphere_block: SPHERE identifier OPEN_BLOCK sphere_block_content_list CLOSE_BLOCK
 	if (!$2.empty())
 		$$.identifier = $2;
 }
+
+ // Adding the plane block object definition
+plane_block_content:
+	point_line { Plane s; s.setPoint($1); $$ = s; }
+	| material_line_id { Plane s; s.setMaterial($1); $$ = s; }
+	| material_line_obj { Plane s; s.setMaterial($1); $$ = s; }
+	| normal_line { Plane s; s.setNormal($1); $$ = s; }
+
+plane_block_content_list:
+	plane_block_content { $$ = $1; }
+	| plane_block_content_list plane_block_content {
+		$$ = $1;
+
+		if ($2.point_set)
+			$$.setPoint($2.getPoint());
+		if ($2.mat.has_value())
+			$$.mat = $2.mat;
+		if ($2.normal_set)
+			$$.setNormal($2.getNormal());
+	}
+
+plane_block: PLANE identifier OPEN_BLOCK plane_block_content_list CLOSE_BLOCK {
+	$$ = $4;
+	if (!$2.empty())
+		$$.identifier = $2;
+}
+
 %%
 
 void yy::parser::error(const std::string& msg) {
