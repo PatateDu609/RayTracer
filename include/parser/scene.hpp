@@ -50,24 +50,23 @@ public:
 	};
 
 	[[nodiscard]] static const Resolution &resolution();
-	[[nodiscard]] static const AmbientLight &ambient_light();
-	[[nodiscard]] static const Camera &camera();
+	[[nodiscard]] static Camera &camera();
 
-	[[nodiscard]] static const std::vector<std::unique_ptr<PointLight>> &point_lights();
-	[[nodiscard]] static const std::vector<std::unique_ptr<Sphere>> &spheres();
+	[[nodiscard]] static std::vector<std::shared_ptr<Light>> lights();
+	[[nodiscard]] static const std::vector<std::shared_ptr<Sphere>> &spheres();
 	[[nodiscard]] static std::shared_ptr<Material> material(const std::string &id);
 
 private:
 	static std::unique_ptr<Scene> scene_instance;
 
 	// Mandatory fields
-	std::unique_ptr<Resolution>   res;
-	std::unique_ptr<AmbientLight> ambient_lighting;
-	std::unique_ptr<Camera>       cam;
+	std::shared_ptr<Resolution>   res;
+	std::shared_ptr<AmbientLight> ambient_lighting;
+	std::shared_ptr<Camera>       cam;
 
 	// Optional fields
-	std::vector<std::unique_ptr<PointLight>>         pt_lights;
-	std::vector<std::unique_ptr<Sphere>>             sps;
+	std::vector<std::shared_ptr<PointLight>>         pt_lights;
+	std::vector<std::shared_ptr<Sphere>>             sps;
 	std::map<std::string, std::shared_ptr<Material>> mats;
 
 	friend SceneParserProxy;

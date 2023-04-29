@@ -41,3 +41,15 @@ void Light::setIntensity(double i) {
 void Light::resetIntensity() {
 	intensity.reset();
 }
+
+
+Color compute_lighting(const std::vector<std::shared_ptr<Light>> &lts,
+                       const std::shared_ptr<IntersectionMetadata> &metadata) {
+	Color c(0, 0, 0);
+
+	for (const auto &lt: lts) {
+		c += lt->compute_lighting(metadata);
+	}
+
+	return c;
+}

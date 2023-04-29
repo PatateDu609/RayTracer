@@ -45,7 +45,6 @@ SyntaxHighlighter::symbol_category SyntaxHighlighter::get_symbol_category(symbol
 		case symbol_kind::S_COLOR:
 		case symbol_kind::S_INTENSITY:
 		case symbol_kind::S_VIEW_DIRECTION:
-		case symbol_kind::S_UP_DIRECTION:
 		case symbol_kind::S_FOV:
 		case symbol_kind::S_RADIUS:
 		case symbol_kind::S_DIFFUSE:
@@ -102,7 +101,6 @@ SyntaxHighlighter::str_symbol_mapper SyntaxHighlighter::init_symbols() {
 	mapping["color"]          = symbol_kind::S_COLOR;
 	mapping["intensity"]      = symbol_kind::S_INTENSITY;
 	mapping["view_dir"] = symbol_kind::S_VIEW_DIRECTION;
-	mapping["up_dir"]   = symbol_kind::S_UP_DIRECTION;
 	mapping["fov"]            = symbol_kind::S_FOV;
 	mapping["material"]       = symbol_kind::S_MATERIAL;
 	mapping["radius"]         = symbol_kind::S_RADIUS;
@@ -134,8 +132,6 @@ std::string SyntaxHighlighter::stringify_keyword(symbol_kind kind, symbol_catego
 			return "intensity";
 		case symbol_kind::S_VIEW_DIRECTION:
 			return "view direction";
-		case symbol_kind::S_UP_DIRECTION:
-			return "up direction";
 		case symbol_kind::S_FOV:
 			return "fov";
 		case symbol_kind::S_RADIUS:
@@ -271,7 +267,6 @@ void SyntaxHighlighter::update_state(SyntaxHighlighter::symbol_kind kind, Syntax
 		case symbol_kind::S_COLOR:
 		case symbol_kind::S_INTENSITY:
 		case symbol_kind::S_VIEW_DIRECTION:
-		case symbol_kind::S_UP_DIRECTION:
 		case symbol_kind::S_FOV:
 		case symbol_kind::S_RADIUS:
 		case symbol_kind::S_DIFFUSE: {

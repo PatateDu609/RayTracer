@@ -8,3 +8,5 @@ generated/parser.*
 *.o
 
 rt
+
+/*.png

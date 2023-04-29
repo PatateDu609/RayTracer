@@ -11,7 +11,7 @@
 
 	#include "parser/color.hpp"
 	#include "parser/resolution.hpp"
-	#include "parser/vector.hpp"
+	#include "maths/vector.hpp"
 	#include "parser/point_light.hpp"
 	#include "parser/ambient_light.hpp"
 	#include "parser/camera.hpp"
@@ -66,7 +66,6 @@
 %token COLOR "color"
 %token INTENSITY "intensity"
 %token VIEW_DIRECTION "view_direction"
-%token UP_DIRECTION "up_direction"
 %token FOV "fov"
 %token MATERIAL "material"
 %token RADIUS "radius"
@@ -74,7 +73,7 @@
 
 %type <Resolution> resolution_line resolution_tuple
 %type <Color> color_tuple color_line diffuse_line
-%type <Vector> vector position_line view_direction_line up_direction_line
+%type <Vector3> vector position_line view_direction_line
 %type <PointLight> point_light_block_content point_light_block_content_list point_light_block
 %type <AmbientLight> ambient_light_block_content ambient_light_block_content_list ambient_light_block
 %type <Camera> camera_block_content camera_block_content_list camera_block
@@ -114,7 +113,7 @@ resolution_line: RESOLUTION EQUAL resolution_tuple { $$ = $3; }
  // Defining utils lines
 color_tuple: OPEN_TUPLE INT COMMA INT COMMA INT CLOSE_TUPLE { $$ = Color($2, $4, $6); }
 color_line: COLOR EQUAL color_tuple { $$ = $3; }
-vector: OPEN_TUPLE number COMMA number COMMA number CLOSE_TUPLE { $$ = Vector($2, $4, $6); }
+vector: OPEN_TUPLE number COMMA number COMMA number CLOSE_TUPLE { $$ = Vector3($2, $4, $6); }
 position_line: POSITION EQUAL vector { $$ = $3; }
 intensity_line: INTENSITY EQUAL number { $$ = $3; }
 
@@ -165,13 +164,11 @@ ambient_light_block: AMBIENT_LIGHT identifier OPEN_BLOCK ambient_light_block_con
 
  // Adding the camera block definition
 view_direction_line: VIEW_DIRECTION EQUAL vector { $$ = $3; }
-up_direction_line: UP_DIRECTION EQUAL vector { $$ = $3; }
 fov_line: FOV EQUAL number { $$ = $3; }
 
 camera_block_content:
 	position_line { Camera cam; cam.position($1); $$ = cam; }
 	| view_direction_line { Camera cam; cam.view($1); $$ = cam; }
-	| up_direction_line { Camera cam; cam.up($1); $$ = cam; }
 	| fov_line { Camera cam; cam.fov($1); $$ = cam; }
 
 camera_block_content_list:
@@ -183,8 +180,6 @@ camera_block_content_list:
 			$$.position($2.pos);
 		if ($2.view_dir_set)
 			$$.view($2.view_dir);
-		if ($2.up_dir.has_value())
-			$$.up(*$2.up_dir);
 		if ($2.fov_rad.has_value()) {
 			$$.fov_rad = $2.fov_rad;
 			$$.tan_fov = $2.tan_fov;

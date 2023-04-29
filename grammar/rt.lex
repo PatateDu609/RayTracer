@@ -56,10 +56,6 @@ ID [a-z][a-z0-9A-Z_]*
 	col += std::string(yytext).length();
 	return token_kind_type::VIEW_DIRECTION;
 }
-"up_direction" {
-	col += std::string(yytext).length();
-	return token_kind_type::UP_DIRECTION;
-}
 "fov" {
 	col += std::string(yytext).length();
 	return token_kind_type::FOV;

@@ -29,6 +29,9 @@ public:
 	void albedo_g(double val);
 	void albedo_b(double val);
 
+	Color operator+(const Color& other) const;
+	Color& operator+=(const Color& c);
+
 private:
 	Tuple<uint8_t, 3> _internal;
 	Tuple<double, 3> _albedo;

@@ -3,7 +3,7 @@
 
 #include "scene_block_object.hpp"
 #include "material.hpp"
-#include "vector.hpp"
+#include "maths/vector.hpp"
 #include "engine/ray.hpp"
 #include <variant>
 #include <memory>
@@ -11,8 +11,8 @@
 struct IntersectionMetadata {
 	IntersectionMetadata(const Ray& r, double t);
 
-	Vector normal;
-	Vector hit;
+	Vector3  normal;
+	Vector3  hit;
 	Material mat;
 	double t;
 	const Ray& r;
@@ -22,11 +22,11 @@ class Sphere : public SceneBlockObject {
 public:
 	Sphere& operator=(const Sphere& other) = default;
 
-	[[nodiscard]] const Vector &getPosition() const;
+	[[nodiscard]] const Vector3 &getPosition() const;
 	[[nodiscard]] std::variant<Material, std::string> getMaterial() const;
 	[[nodiscard]] double getRadius() const;
 
-	void setPosition(const Vector& p);
+	void setPosition(const Vector3& p);
 	void setMaterial(const Material& m);
 	void setMaterial(const std::string& material_id);
 	void resetMaterial();
@@ -37,8 +37,8 @@ public:
 private:
 	static const Material default_material;
 
-	Vector position;
-	bool   position_set{false};
+	Vector3 position;
+	bool    position_set{false};
 
 	std::optional<std::variant<Material, std::string>> mat;
 

@@ -34,14 +34,16 @@ std::vector<Color> render() {
 	std::vector<Color> res;
 	res.reserve(w * h);
 
-	const Camera &cam = Scene::camera();
-	const std::vector<std::unique_ptr<PointLight>> &lights = Scene::point_lights();
+	Camera &cam = Scene::camera();
+	const auto &lts = Scene::lights();
+
+	cam.look_at();
 
 	for (size_t y = 0; y < h; y++) {
 		for (size_t x = 0; x < w; x++) {
 			Ray ray = cam.cast_ray(make_pixel_tuple(x, y));
 
-			if (lights.empty())
+			if (lts.empty())
 			{
 				res.push_back(Color(0, 0, 0));
 				continue;
@@ -53,8 +55,8 @@ std::vector<Color> render() {
 				continue;
 			}
 
-			const auto& light = lights[0];
-			res.push_back(light->compute_lighting(intersection_metadata));
+			Color final = compute_lighting(lts, intersection_metadata);
+			res.push_back(final);
 		}
 	}
 

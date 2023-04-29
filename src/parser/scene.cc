@@ -71,28 +71,30 @@ const Resolution &Scene::resolution() {
 }
 
 
-const AmbientLight &Scene::ambient_light() {
-	if (!Scene::scene_instance)
-		throw NoSceneLoadedException();
-	return *Scene::scene_instance->ambient_lighting;
-}
-
-
-const Camera &Scene::camera() {
+Camera &Scene::camera() {
 	if (!Scene::scene_instance)
 		throw NoSceneLoadedException();
 	return *Scene::scene_instance->cam;
 }
 
 
-const std::vector<std::unique_ptr<PointLight>> &Scene::point_lights() {
+std::vector<std::shared_ptr<Light>> Scene::lights() {
 	if (!Scene::scene_instance)
 		throw NoSceneLoadedException();
-	return Scene::scene_instance->pt_lights;
+	std::vector<std::shared_ptr<Light>> lts;
+	auto& i = scene_instance;
+
+	lts.push_back(i->ambient_lighting);
+
+	for (const auto& pt_lts : i->pt_lights) {
+		lts.push_back(pt_lts);
+	}
+
+	return lts;
 }
 
 
-const std::vector<std::unique_ptr<Sphere>> &Scene::spheres() {
+const std::vector<std::shared_ptr<Sphere>> &Scene::spheres() {
 	if (!Scene::scene_instance)
 		throw NoSceneLoadedException();
 	return Scene::scene_instance->sps;

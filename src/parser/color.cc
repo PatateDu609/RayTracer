@@ -1,4 +1,5 @@
 #include "parser/color.hpp"
+#include "syntax_highlighting.hpp"
 
 
 Color::Color() : Color(0, 0, 0) {
@@ -102,11 +103,27 @@ void Color::albedo_b(double val) {
 	_internal[2] = _albedo[2] * 255.;
 }
 
-#include "syntax_highlighting.hpp"
+
+Color Color::operator+(const Color &other) const {
+	Color c(
+			std::max(0., std::min(255., (r() + other.r()) / 2.)),
+			std::max(0., std::min(255., (g() + other.g()) / 2.)),
+			std::max(0., std::min(255., (b() + other.b()) / 2.))
+	);
+
+	return c;
+}
+
+
+Color &Color::operator+=(const Color &c) {
+	return *this = *this + c;
+}
+
 
 std::ostream &operator<<(std::ostream &os, const Color &c) {
 	return os << "Color(" << +c.r() << ", " << +c.g() << ", " << +c.b() << ")";
 }
+
 
 SyntaxHighlighter &operator<<(SyntaxHighlighter &sh, const Color &c) {
 	return sh << "(" << c.r() << "," << c.g() << "," << c.b() << ")";

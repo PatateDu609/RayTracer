@@ -1,6 +1,7 @@
 #ifndef RAYTRACER_INCLUDE_LIGHT_HPP
 #define RAYTRACER_INCLUDE_LIGHT_HPP
 
+#include <vector>
 #include "scene_block_object.hpp"
 #include "color.hpp"
 #include "sphere.hpp"
@@ -37,5 +38,8 @@ protected:
 
 	friend class yy::parser;
 };
+
+Color
+compute_lighting(const std::vector<std::shared_ptr<Light>> &lts, const std::shared_ptr<IntersectionMetadata> &metadata);
 
 #endif //RAYTRACER_INCLUDE_LIGHT_HPP

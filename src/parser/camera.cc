@@ -1,13 +1,10 @@
 #include "parser/camera.hpp"
 #include "parser/scene.hpp"
-#include <cmath>
-#include <vector>
-#include <sstream>
-#include <iomanip>
+#include "syntax_highlighting.hpp"
 #include <cmath>
 
-const Vector Camera::default_up{0, 1, 0};
-const double Camera::default_fov = M_PI_2;
+const Vector3 Camera::default_up{0, 1, 0};
+const double  Camera::default_fov = M_PI_2;
 
 
 double angle_deg_to_rad(double deg) {
@@ -24,25 +21,18 @@ double angle_rad_to_deg(double rad) {
 }
 
 
-Camera::Camera() : SceneBlockObject(""), pos(), pos_set(false), view_dir(), view_dir_set(false), up_dir(), fov_rad() {
-
+Camera::Camera() : SceneBlockObject(""), pos(), pos_set(false), view_dir(), view_dir_set(false), fov_rad() {
+	tan_fov = tan(default_fov / 2);
 }
 
 
-const Vector &Camera::position() const {
+const Vector3 &Camera::position() const {
 	return pos;
 }
 
 
-const Vector &Camera::view() const {
+const Vector3 &Camera::view() const {
 	return view_dir;
-}
-
-
-const Vector &Camera::up() const {
-	if (up_dir.has_value())
-		return *up_dir;
-	return default_up;
 }
 
 
@@ -53,27 +43,16 @@ double Camera::fov() const {
 }
 
 
-void Camera::position(const Vector &p) {
+void Camera::position(const Vector3 &p) {
 	pos     = p;
 	pos_set = true;
 }
 
 
-void Camera::view(const Vector &v) {
+void Camera::view(const Vector3 &v) {
 	view_dir = v;
 	view_dir.normalize();
 	view_dir_set = true;
-}
-
-
-void Camera::up(const Vector &u) {
-	up_dir = u;
-	up_dir->normalize();
-}
-
-
-void Camera::reset_up() {
-	up_dir.reset();
 }
 
 
@@ -89,9 +68,6 @@ void Camera::reset_fov() {
 }
 
 
-#include "syntax_highlighting.hpp"
-
-
 SyntaxHighlighter &operator<<(SyntaxHighlighter &sh, const Camera &cam) {
 	sh << "Camera";
 	if (cam.identifier)
@@ -102,29 +78,44 @@ SyntaxHighlighter &operator<<(SyntaxHighlighter &sh, const Camera &cam) {
 		sh << "position" << "=" << cam.pos;
 
 	if (cam.view_dir_set)
-		sh << "view_dir" << "=" << cam.view_dir;
+		sh << "view_dir" << "=" << cam.view();
 
-	sh << "up_dir" << "=" << cam.up();
 	sh << "fov" << "=" << angle_rad_to_deg(cam.fov()) << SyntaxHighlighter::endl;
 
 	return sh << "}";
 }
 
 
+void Camera::look_at() {
+	Vector3 forward = view();
+
+	Vector3 arbitrary(0, 1, 0);
+	arbitrary.normalize();
+
+	Vector3 right = arbitrary.cross(forward);
+
+	Vector3 up = forward.cross(right);
+
+	c2w.set_row(0, right, 0);
+	c2w.set_row(1, up, 0);
+	c2w.set_row(2, forward, 0);
+	c2w.set_row(3, position(), 1);
+
+	ray_origin = c2w.transform_point(Vector3(0, 0, 0));
+}
+
+
 Ray Camera::cast_ray(const Tuple<double, 2> &pixel_coord) const {
-	uint32_t w           = Scene::resolution().width();
-	uint32_t h           = Scene::resolution().height();
-//	double   aspectRatio = Scene::resolution().aspect_ratio();
+	uint32_t w = Scene::resolution().width();
+	uint32_t h = Scene::resolution().height();
+	double   aspectRatio = Scene::resolution().aspect_ratio();
 
 	double x = pixel_coord[0];
 	double y = pixel_coord[1];
 
-	Vector d{
-			x - w / 2.,
-			h / 2. - y,
-			-(h / 2.) / (tan_fov),
-	};
-	d.normalize();
+	double fx = (2 * (x + .5) / static_cast<double>(w) - 1) * aspectRatio * tan_fov;
+	double fy = (1 - 2 * (y + .5) / static_cast<double>(h)) * tan_fov;
 
-	return Ray(Vector(0, 0, 0), d);
+
+	return Ray(ray_origin, c2w.transform_direction(fx, fy, -1));
 }

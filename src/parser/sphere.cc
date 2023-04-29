@@ -14,7 +14,7 @@ IntersectionMetadata::IntersectionMetadata(const Ray &ray, double param) : t(par
 }
 
 
-const Vector &Sphere::getPosition() const {
+const Vector3 &Sphere::getPosition() const {
 	return position;
 }
 
@@ -33,7 +33,7 @@ double Sphere::getRadius() const {
 }
 
 
-void Sphere::setPosition(const Vector &p) {
+void Sphere::setPosition(const Vector3 &p) {
 	position     = p;
 	position_set = true;
 }
@@ -56,7 +56,7 @@ void Sphere::resetMaterial() {
 
 void Sphere::setRadius(double r) {
 	radius     = r;
-	radius_2   = r * r;
+	radius_2   = std::pow(r, 2);
 	radius_set = true;
 }
 

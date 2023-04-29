@@ -6,15 +6,20 @@ point_light {
 	intensity = 0.8
 }
 
-ambient_light ambient_light_id {
-	color = (255, 255, 255)
+point_light {
+	position = (-30, 60, -20)
+	color = (125, 12, 87)
 	intensity = 1
+}
+
+ambient_light ambient_light_id {
+	color = (160, 120, 255)
+	intensity = 0.95
 }
 
 camera cam12 {
 	position = (0, 0, 0)
-	view_direction = (1, 1, 0)
-	fov = 60
+	view_direction = (0, 0, 1)
 }
 
 sphere {
@@ -22,5 +27,13 @@ sphere {
 	radius = 20
 	material = {
 		diffuse = (25, 251, 224)
+	}
+}
+
+sphere {
+	position = (0, 12, -55)
+	radius = 12
+	material = {
+		diffuse = (255, 125, 123)
 	}
 }

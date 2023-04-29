@@ -1,15 +1,15 @@
 #ifndef RAYTRACER_INCLUDE_ENGINE_RAY_HPP
 #define RAYTRACER_INCLUDE_ENGINE_RAY_HPP
 
-#include "parser/vector.hpp"
+#include "maths/vector.hpp"
 
 struct Ray {
-	Ray(const Vector &o, const Vector &d);
+	Ray(const Vector3 &o, const Vector3 &d);
 
-	Vector operator() (double t) const;
+	Vector3 operator() (double t) const;
 
-	Vector origin;
-	Vector direction;
+	Vector3 origin;
+	Vector3 direction;
 };
 
 #endif //RAYTRACER_INCLUDE_ENGINE_RAY_HPP
