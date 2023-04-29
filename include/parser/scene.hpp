@@ -56,6 +56,8 @@ public:
 	[[nodiscard]] static const std::vector<std::shared_ptr<Object>> &objects();
 	[[nodiscard]] static std::shared_ptr<Material> material(const std::string &id);
 
+	static bool cast_shadow_ray(const PointLight& pt, const std::shared_ptr<Object::IntersectionMetadata>& metadata);
+
 private:
 	static std::unique_ptr<Scene> scene_instance;
 

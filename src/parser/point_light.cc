@@ -20,6 +20,9 @@ void PointLight::setPosition(const Vector3 &pos) {
 
 
 Color PointLight::compute_lighting(const std::shared_ptr<Object::IntersectionMetadata> &metadata) const {
+	if (!Scene::cast_shadow_ray(*this, metadata))
+		return Color(0, 0, 0);
+
 	Vector3 L       = position - metadata->hit; // Intersection hit point ----> Light position
 	double  L_norm2 = std::pow(L.norm(), 2);
 	double  L_dot_N = std::max(L.normalize().dot(metadata->normal.normalize()), 0.);
