@@ -122,7 +122,7 @@ bool Scene::cast_shadow_ray(const PointLight &pt, const std::shared_ptr<Object::
 	double  norm = L.norm();
 	Vector3 dir = L.normalize();
 
-	Ray             ray(metadata->hit + dir * 1e-4, dir);
+	Ray             ray(metadata->hit + metadata->normal * 1e-4, dir);
 	for (const auto &obj: objs) {
 		std::shared_ptr<Object::IntersectionMetadata> local_metadata = obj->intersect(ray);
 		if (!local_metadata)

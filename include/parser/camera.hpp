@@ -6,9 +6,6 @@
 #include "engine/ray.hpp"
 #include "maths/matrix.hpp"
 
-double angle_deg_to_rad(double deg);
-double angle_rad_to_deg(double rad);
-
 class Camera : public SceneBlockObject {
 public:
 	Camera();

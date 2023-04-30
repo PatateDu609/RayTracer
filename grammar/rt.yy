@@ -20,7 +20,6 @@
 	#include "parser/sphere.hpp"
 	#include "parser/scene.hpp"
 	#include "parser/plane.hpp"
-	#include "parser/box.hpp"
 	#include "parser/triangle.hpp"
 }
 
@@ -75,17 +74,15 @@
 %token RADIUS "radius"
 %token DIFFUSE "diffuse"
 %token PLANE "plane"
-%token BOX "box"
 %token TRIANGLE "triangle"
 %token POINT "point"
+%token POINTS "points"
 %token NORMAL "normal"
-%token P1 "p1"
-%token P2 "p2"
-%token P3 "p3"
 
 %type <Resolution> resolution_line resolution_tuple
 %type <Color> color_tuple color_line diffuse_line
-%type <Vector3> vector position_line view_direction_line point_line p1_line p2_line p3_line normal_line
+%type <Vector3> vector position_line view_direction_line point_line normal_line vector_tuple_content
+%type <std::vector<Vector3>> points_line vector_tuple_content_list
 %type <PointLight> point_light_block_content point_light_block_content_list point_light_block
 %type <AmbientLight> ambient_light_block_content ambient_light_block_content_list ambient_light_block
 %type <Camera> camera_block_content camera_block_content_list camera_block
@@ -95,8 +92,7 @@
 
 %type <Sphere> sphere_block_content sphere_block_content_list sphere_block
 %type <Plane> plane_block_content plane_block_content_list plane_block
-/* %type <Box> box_block_content box_block_content_list box_block
-%type <Triangle> triangle_block_content triangle_block_content_list triangle_block */
+/* %type <Triangle> triangle_block_content triangle_block_content_list triangle_block */
 
 %%
 
@@ -111,8 +107,7 @@ file_object_description:
 	| material_block { SceneParserProxy::append_material($1); }
 	| sphere_block { SceneParserProxy::append_object(std::shared_ptr<Object>(new Sphere($1))); }
 	| plane_block { SceneParserProxy::append_object(std::shared_ptr<Object>(new Plane($1))); }
-	/* | box_block { SceneParserProxy::append_object(std::shared_ptr<Object>(new Box($1))); }
-	| triangle_block { SceneParserProxy::append_object(std::shared_ptr<Object>(new Triangle($1))); } */
+	/* | triangle_block { SceneParserProxy::append_object(std::shared_ptr<Object>(new Triangle($1))); } */
 
 file_description: epsilon | file_object_description file_description
 
@@ -134,13 +129,15 @@ color_tuple: OPEN_TUPLE INT COMMA INT COMMA INT CLOSE_TUPLE { $$ = Color($2, $4,
 color_line: COLOR EQUAL color_tuple { $$ = $3; }
 vector: OPEN_TUPLE number COMMA number COMMA number CLOSE_TUPLE { $$ = Vector3($2, $4, $6); }
 position_line: POSITION EQUAL vector { $$ = $3; }
-p1_line: P1 EQUAL vector { $$ = $3; }
-p2_line: P2 EQUAL vector { $$ = $3; }
-p3_line: P3 EQUAL vector { $$ = $3; }
 point_line: POINT EQUAL vector { $$ = $3; }
 normal_line: NORMAL EQUAL vector { $$ = $3; }
 intensity_line: INTENSITY EQUAL number { $$ = $3; }
 
+vector_tuple_content: COMMA vector { $$ = $2; }
+vector_tuple_content_list:
+	vector_tuple_content { $$ = $1; }
+	| vector_tuple_content_list vector_tuple_content { $$ = $1; $$.push_back(2); }
+points_line: POINTS EQUAL OPEN_TUPLE vector vector_tuple_content_list CLOSE_TUPLE { $$ = $5; $$.insert($$.begin(), $4); }
 
 material_line_id: MATERIAL EQUAL ID { $$ = $3; }
 material_line_obj: MATERIAL EQUAL material_block_object { $$ = $3; }
@@ -294,6 +291,29 @@ plane_block: PLANE identifier OPEN_BLOCK plane_block_content_list CLOSE_BLOCK {
 	if (!$2.empty())
 		$$.identifier = $2;
 }
+
+ // Adding the box block object definition
+/* triangle_block_content:
+	points_line { Triangle s; s.setBounds($1); $$ = b; }
+	| material_line_id { Triangle s; s.setMaterial($1); $$ = s; }
+	| material_line_obj { Triangle s; s.setMaterial($1); $$ = s; }
+
+triangle_block_content_list:
+	triangle_block_content { $$ = $1; }
+	| triangle_block_content_list triangle_block_content {
+		$$ = $1;
+
+		if (!$2.points.empty())
+			$$.setBounds($2.getBounds());
+		if ($2.mat.has_value())
+			$$.mat = $2.mat;
+	}
+
+triangle_block: TRIANGLE identifier OPEN_BLOCK triangle_block_content_list CLOSE_BLOCK {
+	$$ = $4;
+	if (!$2.empty())
+		$$.identifier = $2;
+} */
 
 %%
 

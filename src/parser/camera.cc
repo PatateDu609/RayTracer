@@ -1,24 +1,11 @@
 #include "parser/camera.hpp"
 #include "parser/scene.hpp"
 #include "syntax_highlighting.hpp"
+#include "maths/utils.hpp"
 #include <cmath>
 
 const Vector3 Camera::default_up{0, 1, 0};
 const double  Camera::default_fov = M_PI_2;
-
-
-double angle_deg_to_rad(double deg) {
-	static double ratio = M_PI / 180.0;
-
-	return ratio * deg;
-}
-
-
-double angle_rad_to_deg(double rad) {
-	static double ratio = 180.0 / M_PI;
-
-	return ratio * rad;
-}
 
 
 Camera::Camera() : SceneBlockObject(""), pos(), pos_set(false), view_dir(), view_dir_set(false), fov_rad() {
@@ -101,7 +88,7 @@ void Camera::look_at() {
 	c2w.set_row(2, forward, 0);
 	c2w.set_row(3, position(), 1);
 
-	ray_origin = c2w.transform_point(Vector3(0, 0, 0));
+	ray_origin = c2w.transform_point(0, 0, 0);
 }
 
 

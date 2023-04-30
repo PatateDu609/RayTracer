@@ -76,10 +76,6 @@ ID [a-z][a-z0-9A-Z_]*
 	col += std::string(yytext).length();
 	return token_kind_type::PLANE;
 }
-"box" {
-	col += std::string(yytext).length();
-	return token_kind_type::BOX;
-}
 "triangle" {
 	col += std::string(yytext).length();
 	return token_kind_type::TRIANGLE;
@@ -92,17 +88,9 @@ ID [a-z][a-z0-9A-Z_]*
 	col += std::string(yytext).length();
 	return token_kind_type::NORMAL;
 }
-"p1" {
+"points" {
 	col += std::string(yytext).length();
-	return token_kind_type::P1;
-}
-"p2" {
-	col += std::string(yytext).length();
-	return token_kind_type::P2;
-}
-"p3" {
-	col += std::string(yytext).length();
-	return token_kind_type::P3;
+	return token_kind_type::POINTS;
 }
 
 [+-]?{DIGIT}+ {

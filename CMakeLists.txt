@@ -48,17 +48,19 @@ set(SRCS
 		${SRC_PATH}/parser/camera.cc
 		${SRC_PATH}/parser/sphere.cc
 		${SRC_PATH}/parser/plane.cc
-		${SRC_PATH}/parser/box.cc
 		${SRC_PATH}/parser/triangle.cc
 
 		${SRC_PATH}/maths/vector.cc
 		${SRC_PATH}/maths/matrix.cc
+		${SRC_PATH}/maths/utils.cc
+		${SRC_PATH}/maths/transform.cc
 
 		${SRC_PATH}/engine/renderer.cc
 		${SRC_PATH}/engine/ray.cc
 		)
 set(INCLUDE_FILES
 		${LEXER_HEADER_OUT} ${PARSER_HEADER_OUT}
+		${INCLUDE_PATH}/syntax_highlighting.hpp
 
 		${INCLUDE_PATH}/parser/color.hpp
 		${INCLUDE_PATH}/parser/object.hpp
@@ -72,11 +74,12 @@ set(INCLUDE_FILES
 		${INCLUDE_PATH}/parser/camera.hpp
 		${INCLUDE_PATH}/parser/sphere.hpp
 		${INCLUDE_PATH}/parser/plane.hpp
-		${INCLUDE_PATH}/parser/box.hpp
 		${INCLUDE_PATH}/parser/triangle.hpp
 
-		${INCLUDE_PATH}/syntax_highlighting.hpp
 		${INCLUDE_PATH}/maths/vector.hpp
+		${INCLUDE_PATH}/maths/matrix.hpp
+		${INCLUDE_PATH}/maths/utils.hpp
+		${INCLUDE_PATH}/maths/transform.hpp
 
 		${INCLUDE_PATH}/engine/renderer.hpp
 		${INCLUDE_PATH}/engine/ray.hpp

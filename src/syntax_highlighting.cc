@@ -33,7 +33,6 @@ SyntaxHighlighter::symbol_category SyntaxHighlighter::get_symbol_category(symbol
 		case symbol_kind::S_CAMERA:
 		case symbol_kind::S_SPHERE:
 		case symbol_kind::S_PLANE:
-		case symbol_kind::S_BOX:
 		case symbol_kind::S_TRIANGLE:
 			return BLOCK_KEYWORD;
 
@@ -52,9 +51,7 @@ SyntaxHighlighter::symbol_category SyntaxHighlighter::get_symbol_category(symbol
 		case symbol_kind::S_RADIUS:
 		case symbol_kind::S_DIFFUSE:
 		case symbol_kind::S_POINT:
-		case symbol_kind::S_P1:
-		case symbol_kind::S_P2:
-		case symbol_kind::S_P3:
+		case symbol_kind::S_POINTS:
 		case symbol_kind::S_NORMAL:
 			return LINE_KEYWORD;
 
@@ -110,13 +107,10 @@ SyntaxHighlighter::str_symbol_mapper SyntaxHighlighter::init_symbols() {
 	mapping["intensity"]     = symbol_kind::S_INTENSITY;
 	mapping["view_dir"]      = symbol_kind::S_VIEW_DIRECTION;
 	mapping["plane"]         = symbol_kind::S_PLANE;
-	mapping["box"]           = symbol_kind::S_BOX;
 	mapping["triangle"]      = symbol_kind::S_TRIANGLE;
 	mapping["point"]         = symbol_kind::S_POINT;
 	mapping["normal"]        = symbol_kind::S_NORMAL;
-	mapping["p1"]            = symbol_kind::S_P1;
-	mapping["p2"]            = symbol_kind::S_P2;
-	mapping["p3"]            = symbol_kind::S_P3;
+	mapping["points"]        = symbol_kind::S_POINTS;
 	mapping["fov"]           = symbol_kind::S_FOV;
 	mapping["material"]      = symbol_kind::S_MATERIAL;
 	mapping["radius"]        = symbol_kind::S_RADIUS;
@@ -156,20 +150,14 @@ std::string SyntaxHighlighter::stringify_keyword(symbol_kind kind, symbol_catego
 			return "diffuse";
 		case symbol_kind::S_PLANE:
 			return "Plane";
-		case symbol_kind::S_BOX:
-			return "Box";
 		case symbol_kind::S_TRIANGLE:
 			return "Triangle";
 		case symbol_kind::S_POINT:
 			return "point";
 		case symbol_kind::S_NORMAL:
 			return "normal";
-		case symbol_kind::S_P1:
-			return "p1";
-		case symbol_kind::S_P2:
-			return "p2";
-		case symbol_kind::S_P3:
-			return "p3";
+		case symbol_kind::S_POINTS:
+			return "points";
 		default:
 			return "";
 	}
