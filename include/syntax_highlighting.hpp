@@ -92,11 +92,15 @@ private:
 	static symbol_color_mapper init_colors();
 
 	std::string get_after_whitespace(symbol_kind kind, symbol_category cat, std::string &indent);
+	static bool is_multiline_tuple(symbol_kind kind);
+	void update_tuple_deep();
 
 	static symbol_kind get_kind(const std::string &tok);
 	static symbol_kind get_kind(double tok);
 	static symbol_kind get_kind(long tok);
 	static symbol_kind get_kind(uint8_t tok);
+
+	bool need_indent(symbol_category cat, symbol_kind kind, const std::string& indent) const;
 
 	symbol_category get_symbol_category(symbol_kind kind) const;
 
@@ -104,6 +108,11 @@ private:
 	void update_accepting_for_current_block();
 
 	static std::string stringify_keyword(symbol_kind kind, symbol_category cat);
+
+	std::optional<symbol_kind> current_line; // this is set only if current_line needs tuple_deep (this isn't a bool to keep track of the current state)
+	size_t                     tuple_deep{0};
+	size_t                     max_tuple_deep{0};
+	bool                       need_break{false};
 
 	symbol_kind             accepting;
 	symbol_kind             last_sym;

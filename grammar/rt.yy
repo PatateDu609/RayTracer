@@ -33,13 +33,14 @@
 	int yyerror(const char *s);
 
 	#define YY_DECL \
-        int yylex(yy::parser::semantic_type *yylval, yyscan_t yyscanner)
+        int yylex(yy::parser::semantic_type *yylval, yy::parser::location_type *yylloc, yyscan_t yyscanner)
     YY_DECL;
+
+	extern std::string scene_filename;
 }
 
-%code {
-}
-
+%locations
+%define api.location.file none
 %define api.value.type variant
 %define parse.error detailed
 %define parse.lac full
@@ -92,7 +93,7 @@
 
 %type <Sphere> sphere_block_content sphere_block_content_list sphere_block
 %type <Plane> plane_block_content plane_block_content_list plane_block
-/* %type <Triangle> triangle_block_content triangle_block_content_list triangle_block */
+%type <Triangle> triangle_block_content triangle_block_content_list triangle_block
 
 %%
 
@@ -107,7 +108,7 @@ file_object_description:
 	| material_block { SceneParserProxy::append_material($1); }
 	| sphere_block { SceneParserProxy::append_object(std::shared_ptr<Object>(new Sphere($1))); }
 	| plane_block { SceneParserProxy::append_object(std::shared_ptr<Object>(new Plane($1))); }
-	/* | triangle_block { SceneParserProxy::append_object(std::shared_ptr<Object>(new Triangle($1))); } */
+	| triangle_block { SceneParserProxy::append_object(std::shared_ptr<Object>(new Triangle($1))); }
 
 file_description: epsilon | file_object_description file_description
 
@@ -135,8 +136,8 @@ intensity_line: INTENSITY EQUAL number { $$ = $3; }
 
 vector_tuple_content: COMMA vector { $$ = $2; }
 vector_tuple_content_list:
-	vector_tuple_content { $$ = $1; }
-	| vector_tuple_content_list vector_tuple_content { $$ = $1; $$.push_back(2); }
+	vector_tuple_content { $$.push_back($1); }
+	| vector_tuple_content_list vector_tuple_content { $$ = $1; $$.push_back($2); }
 points_line: POINTS EQUAL OPEN_TUPLE vector vector_tuple_content_list CLOSE_TUPLE { $$ = $5; $$.insert($$.begin(), $4); }
 
 material_line_id: MATERIAL EQUAL ID { $$ = $3; }
@@ -293,18 +294,18 @@ plane_block: PLANE identifier OPEN_BLOCK plane_block_content_list CLOSE_BLOCK {
 }
 
  // Adding the box block object definition
-/* triangle_block_content:
-	points_line { Triangle s; s.setBounds($1); $$ = b; }
-	| material_line_id { Triangle s; s.setMaterial($1); $$ = s; }
-	| material_line_obj { Triangle s; s.setMaterial($1); $$ = s; }
+triangle_block_content:
+	points_line { Triangle t; t.vertices($1); $$ = t; }
+	| material_line_id { Triangle t; t.setMaterial($1); $$ = t; }
+	| material_line_obj { Triangle t; t.setMaterial($1); $$ = t; }
 
 triangle_block_content_list:
 	triangle_block_content { $$ = $1; }
 	| triangle_block_content_list triangle_block_content {
 		$$ = $1;
 
-		if (!$2.points.empty())
-			$$.setBounds($2.getBounds());
+		if (!$2.vertices().empty())
+			$$.vertices($2.vertices());
 		if ($2.mat.has_value())
 			$$.mat = $2.mat;
 	}
@@ -313,12 +314,19 @@ triangle_block: TRIANGLE identifier OPEN_BLOCK triangle_block_content_list CLOSE
 	$$ = $4;
 	if (!$2.empty())
 		$$.identifier = $2;
-} */
+}
 
 %%
 
-void yy::parser::error(const std::string& msg) {
-	yyerror(msg.c_str());
+void yy::parser::error(const location_type& loc, const std::string& msg) {
+	std::ostringstream oss;
+	position begin = loc.begin;
+
+	if (begin.filename && !begin.filename->empty())
+		oss << *begin.filename << ":";
+	oss << begin.line << ":" << begin.column << ": " << msg;
+
+	yyerror(oss.str().c_str());
 }
 
 /* void yy::parser::report_syntax_error (const context& ctx) const {

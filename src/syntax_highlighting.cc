@@ -185,6 +185,11 @@ std::string SyntaxHighlighter::get_after_whitespace(symbol_kind kind, symbol_cat
 	else
 		indent.clear();
 
+	if (current_line) {
+		double tuple_indentation = std::min(tuple_deep, max_tuple_deep) - (kind == symbol_kind::S_CLOSE_TUPLE);
+		indent.insert(indent.end(), indentation_increment * tuple_indentation, ' ');
+	}
+
 	if (kind == symbol_kind::S_YYUNDEF && !blocks.empty())
 		return indent;
 	else if (kind == symbol_kind::S_YYUNDEF)
@@ -193,11 +198,28 @@ std::string SyntaxHighlighter::get_after_whitespace(symbol_kind kind, symbol_cat
 	switch (cat) {
 		case CLEAR:
 			return "\n";
-		case PUNCTUATION:
-			return " ";
+		case PUNCTUATION: {
+			std::string ret = need_break ? "\n" : " ";
+			need_break = false;
+			return ret;
+		}
 		case BLOCK_TUPLE_DELIMITATION: {
+			if (kind == symbol_kind::S_OPEN_TUPLE && current_line && tuple_deep < max_tuple_deep)
+				return "\n";
+
+			if (kind == symbol_kind::S_CLOSE_TUPLE && current_line) {
+				if (need_break) {
+					indent.insert(indent.begin(), '\n');
+					need_break = false;
+					return "\n";
+				} else {
+					need_break = true;
+					return "";
+				}
+			} else if (kind == symbol_kind::S_CLOSE_TUPLE)
+				return "\n";
+
 			if (kind == symbol_kind::S_OPEN_BLOCK
-			    || kind == symbol_kind::S_CLOSE_TUPLE
 			    || kind == symbol_kind::S_CLOSE_BLOCK)
 				return "\n";
 			return "";
@@ -212,6 +234,22 @@ std::string SyntaxHighlighter::get_after_whitespace(symbol_kind kind, symbol_cat
 			return "";
 	}
 	return "";
+}
+
+
+bool SyntaxHighlighter::is_multiline_tuple(symbol_kind kind) {
+	return kind == symbol_kind::S_POINTS;
+}
+
+
+void SyntaxHighlighter::update_tuple_deep() {
+	switch (*current_line) {
+		case symbol_kind::S_POINTS:
+			max_tuple_deep = 1;
+			break;
+		default:
+			max_tuple_deep = 0;
+	}
 }
 
 
@@ -277,6 +315,9 @@ void SyntaxHighlighter::update_accepting_for_current_block() {
 		case symbol_kind::S_PLANE:
 			accepting = symbol_kind::S_plane_block_content;
 			break;
+		case symbol_kind::S_TRIANGLE:
+			accepting = symbol_kind::S_triangle_block_content;
+			break;
 		default:
 			accepting = symbol_kind::S_YYUNDEF;
 			break;
@@ -285,6 +326,11 @@ void SyntaxHighlighter::update_accepting_for_current_block() {
 
 
 void SyntaxHighlighter::update_state(SyntaxHighlighter::symbol_kind kind, SyntaxHighlighter::symbol_category cat) {
+	if (cat == LINE_KEYWORD && is_multiline_tuple(kind)) {
+		current_line = kind;
+		update_tuple_deep();
+	}
+
 	switch (kind) {
 		case symbol_kind::S_RESOLUTION:
 		case symbol_kind::S_POSITION:
@@ -312,7 +358,8 @@ void SyntaxHighlighter::update_state(SyntaxHighlighter::symbol_kind kind, Syntax
 		case symbol_kind::S_AMBIENT_LIGHT:
 		case symbol_kind::S_CAMERA:
 		case symbol_kind::S_PLANE:
-		case symbol_kind::S_SPHERE: {
+		case symbol_kind::S_SPHERE:
+		case symbol_kind::S_TRIANGLE: {
 			accepting = symbol_kind::S_identifier;
 			blocks.push(kind);
 			break;
@@ -320,6 +367,20 @@ void SyntaxHighlighter::update_state(SyntaxHighlighter::symbol_kind kind, Syntax
 
 		case symbol_kind::S_OPEN_BLOCK:
 			update_accepting_for_current_block();
+			break;
+
+		case symbol_kind::S_OPEN_TUPLE:
+			if (current_line)
+				tuple_deep++;
+			break;
+		case symbol_kind::S_CLOSE_TUPLE:
+			if (current_line && tuple_deep) {
+				tuple_deep--;
+				if (!tuple_deep) {
+					current_line.reset();
+					max_tuple_deep = 0;
+				}
+			}
 			break;
 
 		case symbol_kind::S_CLOSE_BLOCK:
@@ -333,6 +394,30 @@ void SyntaxHighlighter::update_state(SyntaxHighlighter::symbol_kind kind, Syntax
 	last_sym = kind;
 }
 
+bool SyntaxHighlighter::need_indent(symbol_category cat, symbol_kind kind, const std::string& indent) const {
+	if (blocks.empty())
+		return false;
+
+	if (cat == LINE_KEYWORD)
+		return true;
+
+	if (kind == symbol_kind::S_CLOSE_BLOCK)
+		return true;
+
+	if (!current_line)
+		return false;
+
+	if (last_sym == symbol_kind::S_EQUAL)
+		return false;
+
+	if (kind == symbol_kind::S_OPEN_TUPLE)
+		return true;
+
+	if (indent[0] == '\n')
+		return true;
+
+	return false;
+}
 
 SyntaxHighlighter &SyntaxHighlighter::operator<<(const std::string &ahead) {
 	symbol_kind     kind;
@@ -353,8 +438,8 @@ SyntaxHighlighter &SyntaxHighlighter::operator<<(const std::string &ahead) {
 	std::string after = get_after_whitespace(kind, cat, indent);
 
 	if (kind != symbol_kind::S_MATERIAL || last_sym != symbol_kind::S_EQUAL) {
-		if (!blocks.empty() && (cat == LINE_KEYWORD || kind == symbol_kind::S_CLOSE_BLOCK))
-			std::cout << indent;
+		if (need_indent(cat, kind, indent))
+			os << indent;
 
 		if (cat == BLOCK_KEYWORD || cat == LINE_KEYWORD)
 			os << ansi_code << stringify_keyword(kind, cat) << colors.at(CLEAR) << after;

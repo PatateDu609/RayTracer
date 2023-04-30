@@ -136,7 +136,7 @@ bool Scene::cast_shadow_ray(const PointLight &pt, const std::shared_ptr<Object::
 
 
 void dump_scene() {
-	SyntaxHighlighter sh(std::cout);
+	SyntaxHighlighter sh(std::cerr);
 
 	const std::unique_ptr<Scene> &s = Scene::scene_instance;
 

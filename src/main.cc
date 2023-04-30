@@ -8,12 +8,15 @@
 
 #define DEFAULT_IMG_COMP 3
 
+std::string scene_filename;
 
 static FILE *open_file(int ac, char **av) {
 	if (ac == 1) {
 		std::cout << "No argument was provided, please provide a scene input in the terminal." << std::endl;
 		return stdin;
 	}
+
+	scene_filename = av[1];
 
 	FILE *file = fopen(av[1], "r");
 	if (file)
@@ -51,6 +54,7 @@ int main(int ac, char **av) {
 	parse_scene(ac, av);
 
 	dump_scene();
+	return 0;
 
 	const std::vector<Color> &colors = render();
 
