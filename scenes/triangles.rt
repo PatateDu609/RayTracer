@@ -1,18 +1,18 @@
 resolution = (1920, 1080)
 
 point_light {
-	position = (30, -60, -20)
+	position = (0, 60, -20)
 	color = (255, 255, 255)
 	intensity = 1
 }
 
 ambient_light {
-	color = (160, 120, 155)
+	color = (255, 255, 255)
 	intensity = 1
 }
 
 camera {
-	position = (20, 0, -18)
+	position = (0, 0, 0)
 	view_direction = (0, 0, 1)
 	fov = 60
 }
@@ -20,10 +20,18 @@ camera {
 triangle {
 	points = (
 		(0, 10, -20),
-		(-10, 0, -20),
-		(10, 0, -20)
+		(-10, 0, -30),
+		(10, 0, -30)
 	)
 	material = {
-		diffuse = (255, 255, 255)
+		diffuse = (255, 160, 120)
+	}
+}
+
+plane {
+	point = (0, -30, 0)
+	normal = (0, -1, 0)
+	material = {
+		diffuse = (255, 160, 255)
 	}
 }

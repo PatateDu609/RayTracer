@@ -82,6 +82,12 @@ Vector3 &Vector3::operator-() {
 }
 
 
+Vector3 Vector3::operator-() const {
+	Vector3 res = *this;
+
+	return -res;
+}
+
 Vector3 Vector3::operator-(const Vector3 &other) const {
 	Vector3 res(x() - other.x(), y() - other.y(), z() - other.z());
 

@@ -312,6 +312,14 @@ triangle_block_content_list:
 
 triangle_block: TRIANGLE identifier OPEN_BLOCK triangle_block_content_list CLOSE_BLOCK {
 	$$ = $4;
+
+	if ($$.vertices().size() != 3) {
+		std::cerr << "error: a triangle should have exactly 3 vertices" << std::endl;
+		YYERROR;
+	}
+
+	$$.compute_normal();
+
 	if (!$2.empty())
 		$$.identifier = $2;
 }

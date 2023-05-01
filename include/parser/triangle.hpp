@@ -16,6 +16,9 @@ protected:
 
 private:
 	std::vector<Vector3> _vertices;
+	std::optional<Vector3> _normal;
+
+	void compute_normal();
 
 	friend class yy::parser;
 };

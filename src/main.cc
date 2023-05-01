@@ -30,15 +30,17 @@ static FILE *open_file(int ac, char **av) {
 }
 
 
-static void parse_scene(int ac, char **av) {
+static int parse_scene(int ac, char **av) {
 	yyscan_t scanner;
 	yylex_init(&scanner);
 	yyset_in(open_file(ac, av), scanner);
 
 	yy::parser parser(scanner);
-	parser.parse();
+	int res = parser.parse();
 
 	yylex_destroy(scanner);
+
+	return res;
 }
 
 
@@ -51,10 +53,10 @@ static void output_png(const std::string &path, const std::vector<uint8_t> &imag
 
 
 int main(int ac, char **av) {
-	parse_scene(ac, av);
+	if (parse_scene(ac, av))
+		return 1;
 
 	dump_scene();
-	return 0;
 
 	const std::vector<Color> &colors = render();
 
