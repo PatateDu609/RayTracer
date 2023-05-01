@@ -6,8 +6,6 @@
 
 #include <stb_image_write.h>
 
-#define DEFAULT_IMG_COMP 3
-
 std::string scene_filename;
 
 static FILE *open_file(int ac, char **av) {
@@ -58,17 +56,6 @@ int main(int ac, char **av) {
 
 	dump_scene();
 
-	const std::vector<Color> &colors = render();
-
-	std::vector<uint8_t> res;
-	res.reserve(colors.size() * DEFAULT_IMG_COMP);
-
-	for (const Color& c : colors) {
-		res.push_back(c.r());
-		res.push_back(c.g());
-		res.push_back(c.b());
-	}
-
-	output_png("result.png", res);
+	output_png("result.png", render());
 	return 0;
 }

@@ -5,6 +5,8 @@
 #include <iostream>
 #include "tuple.hpp"
 
+#define DEFAULT_IMG_COMP 3
+
 class SyntaxHighlighter;
 
 class Resolution {

@@ -5,6 +5,6 @@
 #include <cinttypes>
 #include "parser/color.hpp"
 
-std::vector<Color> render();
+std::vector<uint8_t> render();
 
 #endif //RAYTRACER_INCLUDE_ENGINE_RENDERER_HPP
