@@ -37,9 +37,10 @@ objects that describe how the scene is organized (cameras, light...).
 
 The main block describes the scene as whole and can contain the following properties.
 
-| Name       | Required | Description            | Value type                            | Default Value |
-|------------|----------|------------------------|---------------------------------------|---------------|
-| resolution | &check;  | Defines the frame size | **Tuple** of exactly two **Integers** | -             |
+| Name       | Required | Description                                                                    | Value type                                                    | Default Value |
+|------------|----------|--------------------------------------------------------------------------------|---------------------------------------------------------------|---------------|
+| resolution | &check;  | Defines the frame size                                                         | **Tuple** of exactly two **Integers**                         | -             |
+| nb_rays    | -        | Specifies the number of rays to cast, sets the anti aliasing setting to apply. | **Integer** which should be a perfect square for best results | 1             |
 
 And the following block objects.
 
@@ -104,7 +105,7 @@ specified as a property of other objects.
 
 ### Triangle Block Object
 
-| Property name | Required | Description                             | Value type                                             | DefaultValue           |
-|---------------|----------|-----------------------------------------|--------------------------------------------------------|------------------------|
-| points        | &check;  | Sets the points of the triangle.        | **Tuple** of exactly 3 points                          | -                      |
-| material      | -        | Sets the material of the triangle.      | Material **object** \| **ID** identifying the material | Default white material |
+| Property name | Required | Description                        | Value type                                             | DefaultValue           |
+|---------------|----------|------------------------------------|--------------------------------------------------------|------------------------|
+| points        | &check;  | Sets the points of the triangle.   | **Tuple** of exactly 3 points                          | -                      |
+| material      | -        | Sets the material of the triangle. | Material **object** \| **ID** identifying the material | Default white material |

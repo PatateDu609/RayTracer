@@ -10,6 +10,7 @@
 #include "camera.hpp"
 #include "ambient_light.hpp"
 #include "point_light.hpp"
+#include "anti_aliasing.hpp"
 
 
 void dump_scene();
@@ -28,11 +29,12 @@ public:
 
 private:
 	static void set_resolution(const Resolution &resolution);
+	static void set_anti_aliasing(const AntiAliasing &anti_aliasing);
 	static void set_ambient_light(const AmbientLight &ambient_light);
 	static void set_camera(const Camera &camera);
 
 	static void append_point_light(const PointLight &point_light);
-	static void append_object(const std::shared_ptr<Object>& obj);
+	static void append_object(const std::shared_ptr<Object> &obj);
 	static void append_material(const Material &material);
 
 	friend class yy::parser;
@@ -50,19 +52,21 @@ public:
 	};
 
 	[[nodiscard]] static const Resolution &resolution();
+	[[nodiscard]] static const std::optional<AntiAliasing> &antiAliasing();
 	[[nodiscard]] static Camera &camera();
 
 	[[nodiscard]] static std::vector<std::shared_ptr<Light>> lights();
 	[[nodiscard]] static const std::vector<std::shared_ptr<Object>> &objects();
 	[[nodiscard]] static std::shared_ptr<Material> material(const std::string &id);
 
-	static bool cast_shadow_ray(const PointLight& pt, const std::shared_ptr<Object::IntersectionMetadata>& metadata);
+	static bool cast_shadow_ray(const PointLight &pt, const std::shared_ptr<Object::IntersectionMetadata> &metadata);
 
 private:
 	static std::unique_ptr<Scene> scene_instance;
 
 	// Mandatory fields
 	std::shared_ptr<Resolution>   res;
+	std::optional<AntiAliasing>   anti_aliasing;
 	std::shared_ptr<AmbientLight> ambient_lighting;
 	std::shared_ptr<Camera>       cam;
 

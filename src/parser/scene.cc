@@ -31,6 +31,13 @@ void SceneParserProxy::set_resolution(const Resolution &resolution) {
 }
 
 
+void SceneParserProxy::set_anti_aliasing(const AntiAliasing &anti_aliasing) {
+	if (!Scene::scene_instance)
+		Scene::scene_instance = std::make_unique<Scene>();
+	Scene::scene_instance->anti_aliasing = anti_aliasing;
+}
+
+
 void SceneParserProxy::set_ambient_light(const AmbientLight &ambient_light) {
 	if (!Scene::scene_instance)
 		Scene::scene_instance = std::make_unique<Scene>();
@@ -70,6 +77,13 @@ const Resolution &Scene::resolution() {
 	if (!Scene::scene_instance)
 		throw NoSceneLoadedException();
 	return *Scene::scene_instance->res;
+}
+
+
+const std::optional<AntiAliasing> &Scene::antiAliasing() {
+	if (!Scene::scene_instance)
+		throw NoSceneLoadedException();
+	return Scene::scene_instance->anti_aliasing;
 }
 
 
@@ -120,7 +134,7 @@ bool Scene::cast_shadow_ray(const PointLight &pt, const std::shared_ptr<Object::
 
 	Vector3 L    = pt.getPosition() - metadata->hit;
 	double  norm = L.norm();
-	Vector3 dir = L.normalize();
+	Vector3 dir  = L.normalize();
 
 	Ray             ray(metadata->hit + metadata->normal * 1e-4, dir);
 	for (const auto &obj: objs) {

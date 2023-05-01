@@ -254,6 +254,19 @@ ID [a-z][a-z0-9A-Z_]*
 	yylloc->end = end;
 	return token_kind_type::POINTS;
 }
+"nb_rays" {
+	yy::position begin;
+	begin.initialize(&scene_filename, row, col);
+
+	col += std::string(yytext).length();
+
+	yy::position end;
+	end.initialize(&scene_filename, row, col);
+
+	yylloc->begin = begin;
+	yylloc->end = end;
+	return token_kind_type::NB_RAYS;
+}
 
 [+-]?{DIGIT}+ {
 	std::string yystr(yytext);

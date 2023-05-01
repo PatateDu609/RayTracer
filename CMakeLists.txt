@@ -43,6 +43,7 @@ set(SRCS
 		${LEXER_OUT} ${PARSER_OUT}
 
 		${SRC_PATH}/parser/color.cc
+		${SRC_PATH}/parser/anti_aliasing.cc
 		${SRC_PATH}/parser/object.cc
 		${SRC_PATH}/parser/point_light.cc
 		${SRC_PATH}/parser/scene.cc
@@ -69,6 +70,7 @@ set(INCLUDE_FILES
 		${INCLUDE_PATH}/syntax_highlighting.hpp
 
 		${INCLUDE_PATH}/parser/color.hpp
+		${INCLUDE_PATH}/parser/anti_aliasing.hpp
 		${INCLUDE_PATH}/parser/object.hpp
 		${INCLUDE_PATH}/parser/point_light.hpp
 		${INCLUDE_PATH}/parser/scene.hpp

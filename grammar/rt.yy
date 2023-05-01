@@ -21,6 +21,7 @@
 	#include "parser/scene.hpp"
 	#include "parser/plane.hpp"
 	#include "parser/triangle.hpp"
+	#include "parser/anti_aliasing.hpp"
 }
 
 %code top {
@@ -79,6 +80,7 @@
 %token POINT "point"
 %token POINTS "points"
 %token NORMAL "normal"
+%token NB_RAYS "nb_rays"
 
 %type <Resolution> resolution_line resolution_tuple
 %type <Color> color_tuple color_line diffuse_line
@@ -89,6 +91,7 @@
 %type <Camera> camera_block_content camera_block_content_list camera_block
 %type <Material> material_block_content material_block_content_list material_block material_block_object material_line_obj
 %type <std::string> identifier material_line_id
+%type <AntiAliasing> nb_rays_line
 %type <double> number intensity_line fov_line radius_line
 
 %type <Sphere> sphere_block_content sphere_block_content_list sphere_block
@@ -102,6 +105,7 @@ epsilon: /* empty rule */
 // Creating the actual file description
 file_object_description:
 	resolution_line { SceneParserProxy::set_resolution($1); }
+	| nb_rays_line { SceneParserProxy::set_anti_aliasing($1); }
 	| ambient_light_block { SceneParserProxy::set_ambient_light($1); }
 	| camera_block { SceneParserProxy::set_camera($1); }
 	| point_light_block { SceneParserProxy::append_point_light($1); }
@@ -124,6 +128,9 @@ number:
  // Defining resolution line
 resolution_tuple: OPEN_TUPLE INT COMMA INT CLOSE_TUPLE { $$ = Resolution($2, $4); }
 resolution_line: RESOLUTION EQUAL resolution_tuple { $$ = $3; }
+
+ // Defining nb_rays line
+nb_rays_line: NB_RAYS EQUAL INT { $$ = AntiAliasing($3); }
 
  // Defining utils lines
 color_tuple: OPEN_TUPLE INT COMMA INT COMMA INT CLOSE_TUPLE { $$ = Color($2, $4, $6); }
